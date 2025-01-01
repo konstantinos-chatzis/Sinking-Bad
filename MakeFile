@@ -1,0 +1,2 @@
+default :
+gcc -o build/Sea-Duel.exe src/main.c src/game.c -Iinclude -Llibs -lraylib -lopengl32 -lgdi32 -lm -lwinmm

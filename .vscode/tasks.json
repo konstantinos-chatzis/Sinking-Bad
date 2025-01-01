@@ -1,0 +1,25 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "gcc raylib build task",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-g",
+                "-o", "build/Sea-Duel.exe",
+                "src/main.c", "src/game.c",
+                "-Iinclude", "-Llibs", "-lraylib", "-lopengl32", "-lgdi32", "-lm", "-lwinmm"
+
+            ],
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Generated task for building Sea-Duel"
+        }
+    ]
+}
