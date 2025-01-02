@@ -8,6 +8,8 @@
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 
+
+
 // Enums
 typedef enum GamePhase {SHIP_DEPLOYMENT, MOVEMENT_COMMANDS, FIRING_COMMANDS, FINAL_EXCECUTION, RESULTS} GamePhase;
 
@@ -17,6 +19,7 @@ typedef struct Ship {
     float rotation;
     bool deployed;
     Color color;
+    Texture2D texture;
 } Ship;
 
 typedef struct Player{
@@ -29,6 +32,8 @@ typedef struct Player{
 
 void UpdateGameInput();
 void UpdateGameDraw();
+void LoadGameTextures();
+void UnloadGameTextures();
 
 // For GameState SHIP_DEPLOYMENT
 void ShipDeploymentInput();
