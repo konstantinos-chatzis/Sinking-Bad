@@ -7,8 +7,6 @@ int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sea Duel");
     SetTargetFPS(60);
 
-
-
     LoadGameTextures();
 
 // Update.
@@ -20,6 +18,7 @@ int main() {
         EndDrawing();
     }
 
+// On Window Close
     UnloadGameTextures();
     CloseWindow();
     return 0;
