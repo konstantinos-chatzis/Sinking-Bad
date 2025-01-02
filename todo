@@ -1,8 +1,0 @@
-players select point at which to shoot a bullet
-
-hit animations and sounds
-miss animations and sounds
-
-for each phase: 
-    one function for code before BeginDrawing();
-    one function for code after BeginDrawing();
