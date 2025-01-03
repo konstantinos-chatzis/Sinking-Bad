@@ -1,2 +1,25 @@
-default :
-gcc -o build/Sea-Duel.exe src/main.c src/game.c -Iinclude -Llibs -lraylib -lopengl32 -lgdi32 -lm -lwinmm
+# Makefile
+
+# Compiler
+CC = gcc
+
+# Compiler and linker flags
+CFLAGS = -Iinclude
+LDFLAGS = -Llibs -lraylib -lopengl32 -lgdi32 -lm -lwinmm
+
+# Source files and target
+SRCS = src/main.c src/game.c src/phase_ship_deployment.c src/phase_movement_commands.c
+OBJS = build/main.o build/game.o build/phase_ship_deployment.o build/phase_movement_commands.o
+TARGET = build/Sea-Duel.exe
+
+# Rules
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $(OBJS) $(CFLAGS) $(LDFLAGS)
+
+build/%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f src/*.o $(TARGET)
