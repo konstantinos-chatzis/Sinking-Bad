@@ -1,6 +1,6 @@
-#include <raylib.h>
-#include <raymath.h>
+#define RAYGUI_IMPLEMENTATION
 #include <game.h>
+#include <phase_movement_commands.h>
 
 int main() {
 // Start.
@@ -8,13 +8,15 @@ int main() {
     SetTargetFPS(60);
 
     LoadGameTextures();
+    LoadSliderTextures();
 
 // Update.
     while (!WindowShouldClose()) {
-        UpdateGameInput();
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        UpdateGameDraw();
+
+        Update();
+
         EndDrawing();
     }
 
