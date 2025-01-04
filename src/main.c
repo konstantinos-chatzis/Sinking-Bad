@@ -1,6 +1,6 @@
-#define RAYGUI_IMPLEMENTATION
+// #define RAYGUI_IMPLEMENTATION
 #include <game.h>
-#include <phase_movement_commands.h>
+#include <phase_movement_commands.h> // TODO: Move load texture functions to game.c
 
 int main() {
 // Start.
@@ -8,7 +8,7 @@ int main() {
     SetTargetFPS(60);
 
     LoadGameTextures();
-    LoadSliderTextures();
+    LoadSpeedSelectioTextures();
 
 // Update.
     while (!WindowShouldClose()) {
@@ -22,6 +22,8 @@ int main() {
 
 // On Window Close
     UnloadGameTextures();
+    UnloadSpeedSelectionTextures();
+    UnloadSpeedSelectionTextures();
     CloseWindow();
     return 0;
 }

@@ -3,7 +3,7 @@
 
 // External Libraries
 #include <raylib.h>
-#include <raygui.h>
+// #include <raygui.h>
 #include <raymath.h>
 #include <math.h>
 #include <stdio.h>
@@ -11,6 +11,7 @@
 // Constants
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
+#define TIMER 15
 
 // Enums
 typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_COMMANDS, MOVEMENT_HALF, FIRING_COMMANDS, MOVEMENT_REST, FINAL_EXCECUTION, RESULTS} GamePhase;

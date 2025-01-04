@@ -4,7 +4,7 @@
 CC = gcc
 
 # Compiler and linker flags
-CFLAGS = -Iinclude
+CFLAGS = -Iinclude 
 LDFLAGS = -Llibs -lraylib -lopengl32 -lgdi32 -lm -lwinmm
 
 # Source files and target
