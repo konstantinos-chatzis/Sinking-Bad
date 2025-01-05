@@ -2,3 +2,4 @@ todo
 */*.o
 build/
 .vscode/
+notes.txt
