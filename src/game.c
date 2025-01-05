@@ -2,6 +2,7 @@
 // Game modules
 #include <phase_ship_deployment.h>
 #include <phase_movement_commands.h>
+#include <phase_movement_half.h>
 
 
 Player players[2] = {
@@ -59,11 +60,17 @@ void HandleGamePhases(){
         case MOVEMENT_COMMANDS:
             ShipDirectionInput(&players, &currentPlayerIndex);
             ShipDirectionDrawing(&players, &currentPlayerIndex);
-            if (players[currentPlayerIndex].hasSelectedDirection) ShipSpeedInputDrawing(&players, &currentPlayerIndex, 1.0f, 10.0f);
+            if (players[currentPlayerIndex].hasSelectedDirection) ShipSpeedInputDrawing(&players, &currentPlayerIndex, 1.0f, 5.0f);
             if (players[0].hasSelectedSpeed && players[1].hasSelectedSpeed) currentPhase++;
             break;
         case MOVEMENT_HALF:
-            //
+            UpdateMovementHalfPhase(&players, GetFrameTime());
+            DrawMovementHalfPhase(&players);
+
+            if (IsMovementHalfPhaseComplete()) {
+                // currentPhase++;  // Move to the next phase
+                printf("Movement half phase complete\n");
+            }
             break;
         case FIRING_COMMANDS:
             //

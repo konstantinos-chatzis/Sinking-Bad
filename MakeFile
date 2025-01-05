@@ -8,8 +8,8 @@ CFLAGS = -Iinclude
 LDFLAGS = -Llibs -lraylib -lopengl32 -lgdi32 -lm -lwinmm
 
 # Source files and target
-SRCS = src/main.c src/game.c src/phase_ship_deployment.c src/phase_movement_commands.c
-OBJS = build/main.o build/game.o build/phase_ship_deployment.o build/phase_movement_commands.o
+SRCS = src/main.c src/game.c src/phase_ship_deployment.c src/phase_movement_commands.c src/phase_movement_half.c
+OBJS = build/main.o build/game.o build/phase_ship_deployment.o build/phase_movement_commands.o build/phase_movement_half.o
 TARGET = build/Sea-Duel.exe
 
 # Rules
