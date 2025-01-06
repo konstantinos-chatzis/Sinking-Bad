@@ -1,5 +1,5 @@
-#include <game.h>
-#include <phase_movement_commands.h>
+#include "game.h"
+#include "phase_movement_commands.h"
 
 // Global variables for textures
 Texture2D sliderBackground;
@@ -201,7 +201,7 @@ void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float 
             buttonClicked = true; 
         } else if (buttonClicked && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             // Button action is triggered only when the mouse is released over the button
-            currentPlayer->ship.speed = selectedSpeed; //
+            currentPlayer->ship.speed = selectedSpeed;
             currentPlayer->hasSelectedSpeed = true;
             *currentPlayerIndex = (*currentPlayerIndex + 1) % 2;
             selectedSpeed = 1.0f; // Reset the selected speed

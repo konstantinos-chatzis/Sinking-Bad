@@ -19,11 +19,9 @@ EXECUTABLE = $(BUILD_DIR)/Sea-Duel.exe
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
