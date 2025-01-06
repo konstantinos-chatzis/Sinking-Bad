@@ -18,7 +18,7 @@ void ShipDirectionDrawing(Player (*players)[2], int* currentPlayerIndex);
 void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float minSpeed, float maxSpeed);
 
 // Texture Loading Functions
-void LoadSpeedSelectioTextures();
+void LoadSpeedSelectionTextures();
 void UnloadSpeedSelectionTextures();
 
 #endif

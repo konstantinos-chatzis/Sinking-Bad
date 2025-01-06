@@ -12,7 +12,7 @@ Texture2D buttonHover;
 Texture2D buttonClick;
 
 // Function to load textures (call this at the beginning of your program)
-void LoadSpeedSelectioTextures() {
+void LoadSpeedSelectionTextures() {
     // Slider textures
     sliderBackground = LoadTexture("assets/sprites/slider_bar_background.png");
     sliderFill = LoadTexture("assets/sprites/slider_bar_fill.png");

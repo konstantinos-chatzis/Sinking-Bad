@@ -37,8 +37,8 @@ void DrawMovementHalfPhase(Player (*players)[2]) {
         DrawTexturePro(
             (*players)[i].ship.texture,
             (Rectangle){0, 0, (*players)[i].ship.texture.width, (*players)[i].ship.texture.height},
-            (Rectangle){(*players)[i].ship.position.x, (*players)[i].ship.position.y, (*players)[i].ship.texture.width * 5, (*players)[i].ship.texture.height * 5},
-            (Vector2){((*players)[i].ship.texture.width * 5) / 2.0f, ((*players)[i].ship.texture.height * 5) / 2.0f},
+            (Rectangle){(*players)[i].ship.position.x, (*players)[i].ship.position.y, (*players)[i].ship.texture.width*5, (*players)[i].ship.texture.height*5},
+            (Vector2){((*players)[i].ship.texture.width*5)/2.0f, ((*players)[i].ship.texture.height*5)/2.0f},
             (*players)[i].ship.rotation,
             WHITE
         );

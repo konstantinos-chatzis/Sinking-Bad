@@ -8,7 +8,7 @@ int main() {
     SetTargetFPS(60);
 
     LoadGameTextures();
-    LoadSpeedSelectioTextures();
+    LoadSpeedSelectionTextures();
 
 // Update.
     while (!WindowShouldClose()) {
