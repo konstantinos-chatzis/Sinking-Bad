@@ -1,5 +1,5 @@
 #include "game.h"
-#include "phase_movement_commands.h" // TODO: Move load texture functions to game.c
+#include "movement_commands.h" // TODO: Move load texture functions to game.c
 
 int main() {
 // Start.

@@ -1,5 +1,5 @@
 #include <game.h>
-#include <phase_movement_half.h>
+#include <movement_half.h>
 
 float movementTime = 10.0f; // Time in seconds for the phase
 float elapsedTime = 0.0f; // Time elapsed since the start of the phase
@@ -14,8 +14,6 @@ float ComputeAcceleration(float initialSpeed, float D_min, float D_max, float k,
 
 
 void UpdateMovementHalfPhase(Player (*players)[2], float deltaTime) {
-    // Currently, this is where you can add logic for updating movement or other gameplay mechanics.
-    // Ships are already moving in the main phase handling.
     elapsedTime += deltaTime;
     if (elapsedTime >= 1.0f) {
         if (movementTime > 0.0f) { // Decrease time until it reaches 0

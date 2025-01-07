@@ -1,5 +1,5 @@
-#ifndef PHASE_MOVEMENT_HALF_H
-#define PHASE_MOVEMENT_HALF_H
+#ifndef MOVEMENT_HALF_H
+#define MOVEMENT_HALF_H
 
 #include "game.h"
 

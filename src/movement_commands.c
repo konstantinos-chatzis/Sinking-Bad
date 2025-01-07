@@ -1,5 +1,5 @@
 #include "game.h"
-#include "phase_movement_commands.h"
+#include "movement_commands.h"
 
 // Global variables for textures
 Texture2D sliderBackground;

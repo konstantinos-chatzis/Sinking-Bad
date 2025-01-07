@@ -1,8 +1,8 @@
 #include "game.h"
 // Game modules
-#include "phase_ship_deployment.h"
-#include "phase_movement_commands.h"
-#include "phase_movement_half.h"
+#include "ship_deployment.h"
+#include "movement_commands.h"
+#include "movement_half.h"
 
 
 Player players[2] = {
@@ -65,9 +65,9 @@ void HandleGamePhases(){
             UpdateMovementHalfPhase(&players, GetFrameTime());
             DrawMovementHalfPhase(&players);
 
-            if (IsMovementPhaseHalfComplete()) {
-                currentPhase = FIRING_COMMANDS;
-            }
+            // if (IsMovementPhaseHalfComplete()) {
+            //     currentPhase = FIRING_COMMANDS;
+            // }
             break;
         case FIRING_COMMANDS:
             // Condition to move to next phase

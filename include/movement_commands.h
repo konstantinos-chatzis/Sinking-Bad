@@ -1,5 +1,5 @@
-#ifndef PHASE_MOVEMENT_COMMANDS_H
-#define PHASE_MOVEMENT_COMMANDS_H
+#ifndef MOVEMENT_COMMANDS_H
+#define MOVEMENT_COMMANDS_H
 
 #include "game.h"
 
