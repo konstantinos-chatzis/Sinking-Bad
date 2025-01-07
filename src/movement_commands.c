@@ -1,5 +1,5 @@
-#include <game.h>
-#include <phase_movement_commands.h>
+#include "game.h"
+#include "movement_commands.h"
 
 // Global variables for textures
 Texture2D sliderBackground;
@@ -10,6 +10,8 @@ Texture2D sliderKnob;
 Texture2D buttonNormal;
 Texture2D buttonHover;
 Texture2D buttonClick;
+
+float selectedSpeed = 1.0f;
 
 // Function to load textures (call this at the beginning of your program)
 void LoadSpeedSelectionTextures() {
@@ -72,11 +74,9 @@ void ShipDirectionDrawing(Player (*players)[2], int* currentPlayerIndex){ // Thi
     }
 }
 
-
-
 void DrawShipSpeedSlider(Player* currentPlayer, float minSpeed, float maxSpeed, Rectangle sliderBounds) {
     // Calculate the slider fill height based on the current speed
-    float sliderFillHeight = ((currentPlayer->ship.speed - minSpeed) / (maxSpeed - minSpeed)) * sliderBounds.height;
+    float sliderFillHeight = ((selectedSpeed - minSpeed) / (maxSpeed - minSpeed)) * sliderBounds.height;
 
     // Draw custom slider background
     DrawTexturePro(
@@ -136,7 +136,7 @@ void DrawShipSpeedSlider(Player* currentPlayer, float minSpeed, float maxSpeed, 
 
     // Draw speed text
     DrawText(
-        TextFormat("Speed: %.1f", currentPlayer->ship.speed),
+        TextFormat("Speed: %.1f", selectedSpeed),
         sliderBounds.x + sliderBounds.width + 10,
         sliderBounds.y,
         20,
@@ -150,11 +150,11 @@ void HandleShipSpeedInput(Player* player, float minSpeed, float maxSpeed, Rectan
         Vector2 mousePosition = GetMousePosition();
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePosition, sliderBounds)) {
             float mouseOffset = sliderBounds.y + sliderBounds.height - mousePosition.y;
-            player->ship.speed = minSpeed + (maxSpeed - minSpeed) * (mouseOffset / sliderBounds.height);
+            selectedSpeed = minSpeed + (maxSpeed - minSpeed) * (mouseOffset / sliderBounds.height);
 
             // Clamp speed within range
-            if (player->ship.speed < minSpeed) player->ship.speed = minSpeed;
-            if (player->ship.speed > maxSpeed) player->ship.speed = maxSpeed;
+            if (selectedSpeed < minSpeed) selectedSpeed = minSpeed;
+            if (selectedSpeed > maxSpeed) selectedSpeed = maxSpeed;
         }
     }
 }
@@ -201,8 +201,10 @@ void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float 
             buttonClicked = true; 
         } else if (buttonClicked && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             // Button action is triggered only when the mouse is released over the button
+            currentPlayer->ship.speed = selectedSpeed;
             currentPlayer->hasSelectedSpeed = true;
             *currentPlayerIndex = (*currentPlayerIndex + 1) % 2;
+            selectedSpeed = 1.0f; // Reset the selected speed
             buttonClicked = false;
 
         } else {

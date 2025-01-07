@@ -1,6 +1,5 @@
-// #define RAYGUI_IMPLEMENTATION
-#include <game.h>
-#include <phase_movement_commands.h> // TODO: Move load texture functions to game.c
+#include "game.h"
+#include "movement_commands.h" // TODO: Move load texture functions to game.c
 
 int main() {
 // Start.
@@ -9,6 +8,7 @@ int main() {
 
     LoadGameTextures();
     LoadSpeedSelectionTextures();
+    InitHitboxes();
 
 // Update.
     while (!WindowShouldClose()) {

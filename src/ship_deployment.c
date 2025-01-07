@@ -1,5 +1,5 @@
-#include <game.h>
-#include <phase_ship_deployment.h>
+#include "game.h"
+#include "ship_deployment.h"
 
 // 
 void ShipDeploymentInput(Player (*players)[2], int* currentPlayerIndex){ // This function goes in UpdateGameInput() in game.c
