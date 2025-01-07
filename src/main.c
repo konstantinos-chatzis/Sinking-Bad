@@ -1,5 +1,4 @@
 #include "game.h"
-#include "movement_commands.h" // TODO: Move load texture functions to game.c
 
 int main() {
 // Start.
@@ -7,7 +6,6 @@ int main() {
     SetTargetFPS(60);
 
     LoadGameTextures();
-    LoadSpeedSelectionTextures();
     InitHitboxes();
 
 // Update.
@@ -22,9 +20,6 @@ int main() {
 
 // On Window Close
     UnloadGameTextures();
-    UnloadSpeedSelectionTextures();
-    UnloadSpeedSelectionTextures();
     CloseWindow();
     return 0;
 }
-

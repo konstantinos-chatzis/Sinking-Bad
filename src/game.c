@@ -5,7 +5,7 @@
 #include "movement_commands.h"
 #include "movement_half.h"
 #include "firing_commands.h"
-
+#include "final_excecution.h"
 
 Player players[2] = {
     {
@@ -96,6 +96,7 @@ void LoadGameTextures(){
         players[i].ship.texture = LoadShipTexture(players[i].ship.color);
         players[i].bomb.texture = LoadBombTexture(players[i].color);
     }
+    LoadSpeedSelectionTextures();
 }
 
 void UnloadGameTextures(){
@@ -144,58 +145,6 @@ void GetHitboxCorners(const Hitbox* hitbox, Vector2 corners[4]) {
     }
 }
 
-// Project polygon corners onto an axis and find the minimum and maximum projections
-void ProjectPolygon(const Vector2* corners, int numCorners, Vector2 axis, float* min, float* max) {
-    *min = FLT_MAX;
-    *max = -FLT_MAX;
-
-    for (int i = 0; i < numCorners; i++) {
-        // Projection of the corner onto the axis
-        float projection = corners[i].x * axis.x + corners[i].y * axis.y; // Dot product
-        if (projection < *min) *min = projection;
-        if (projection > *max) *max = projection;
-    }
-}
-
-// Check for overlap between two projected ranges
-bool CheckOverlap(float minA, float maxA, float minB, float maxB) {
-    return !(maxA < minB || maxB < minA); // No gap means overlap
-}
-
-// Main SAT collision detection function
-bool CheckSATCollision(const Hitbox* hitboxA, const Hitbox* hitboxB) {
-    // Get the corners of both hitboxes
-    Vector2 cornersA[4], cornersB[4];
-    GetHitboxCorners(hitboxA, cornersA);
-    GetHitboxCorners(hitboxB, cornersB);
-
-    // Check for overlap along each edge of both polygons
-    Vector2 axes[4];
-    
-    // Get the edges and the axes perpendicular to them
-    for (int i = 0; i < 4; i++) {
-        // Edge for hitbox A
-        Vector2 edgeA = (i == 3) ? Vector2Subtract(cornersA[0], cornersA[3]) : Vector2Subtract(cornersA[i + 1], cornersA[i]);
-        axes[i] = (Vector2){-edgeA.y, edgeA.x};  // Perpendicular to the edge
-    }
-
-    // Check for overlap along each axis
-    for (int i = 0; i < 4; i++) {
-        // Project hitbox A and B onto the axis
-        float minA, maxA, minB, maxB;
-        ProjectPolygon(cornersA, 4, axes[i], &minA, &maxA);
-        ProjectPolygon(cornersB, 4, axes[i], &minB, &maxB);
-
-        // Check if there's no overlap
-        if (!CheckOverlap(minA, maxA, minB, maxB)) {
-            return false;  // No collision if there's no overlap on this axis
-        }
-    }
-
-    // If no separating axis is found, there is a collision
-    return true;
-}
-
 // Debugging function to draw the hitbox
 void DrawHitbox(const Hitbox* hitbox, Color color) {
     // Get the corners of the hitbox
@@ -212,6 +161,43 @@ void DrawHitbox(const Hitbox* hitbox, Color color) {
     }
 }
 
+ // Debugging function to draw the hitboxes
+void DrawHitboxes(){
+    for(int i = 0; i < 2; i++){
+        DrawHitbox(&players[i].ship.hitbox, GREEN);
+        DrawHitbox(&players[i].bomb.hitbox, GREEN);
+    }
+}
+
+void DrawShips(){
+    for (int i = 0; i < 2; i++){
+        if (players[i].hasDeployed){
+            DrawTexturePro(
+                players[i].ship.texture,
+                (Rectangle){0, 0, players[i].ship.texture.width, players[i].ship.texture.height},
+                (Rectangle){players[i].ship.position.x, players[i].ship.position.y, players[i].ship.texture.width*SHIP_SCALE, players[i].ship.texture.height*SHIP_SCALE},
+                (Vector2){(players[i].ship.texture.width*SHIP_SCALE)/2.0f, (players[i].ship.texture.height*SHIP_SCALE)/2.0f},
+                players[i].ship.rotation,
+                WHITE
+            );
+        }
+    }
+}
+
+void DrawBombs(){
+    for (int i = 0; i < 2; i++){
+        if (players[i].hasFired){
+            DrawTexturePro(
+                players[i].bomb.texture,
+                (Rectangle){0, 0, players[i].bomb.texture.width, players[i].bomb.texture.height},
+                (Rectangle){players[i].bomb.position.x, players[i].bomb.position.y, players[i].bomb.texture.width*BOMB_SCALE, players[i].bomb.texture.height*BOMB_SCALE},
+                (Vector2){(players[i].bomb.texture.width*BOMB_SCALE)/2.0f, (players[i].bomb.texture.height*BOMB_SCALE)/2.0f},
+                0.0f,
+                WHITE
+            );
+        }
+    }
+}
 
 void HandleGamePhases(){
     switch (currentPhase) {
@@ -219,21 +205,11 @@ void HandleGamePhases(){
             //
             break;
         case SHIP_DEPLOYMENT:
-            UpdateHitboxes();
-            DrawHitbox(&players[0].ship.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[1].ship.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[0].bomb.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[1].bomb.hitbox, GREEN); // Debugging
             ShipDeploymentInput(&players, &currentPlayerIndex);
             ShipDeploymentDrawing(&players, &currentPlayerIndex);
             if(players[0].hasDeployed && players[1].hasDeployed) currentPhase++;
             break;
         case MOVEMENT_COMMANDS:
-            UpdateHitboxes();
-            DrawHitbox(&players[0].ship.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[1].ship.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[0].bomb.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[1].bomb.hitbox, GREEN); // Debugging
             ShipDirectionInput(&players, &currentPlayerIndex);
             ShipDirectionDrawing(&players, &currentPlayerIndex);
             if (players[currentPlayerIndex].hasSelectedDirection) ShipSpeedInputDrawing(&players, &currentPlayerIndex, 1.0f, 10.0f);
@@ -241,13 +217,7 @@ void HandleGamePhases(){
             break;
         case MOVEMENT_HALF:
             if(!players[0].hasFired && !players[1].hasFired){
-                UpdateHitboxes();
-                DrawHitbox(&players[0].ship.hitbox, GREEN); // Debugging
-                DrawHitbox(&players[1].ship.hitbox, GREEN); // Debugging
-                DrawHitbox(&players[0].bomb.hitbox, GREEN); // Debugging
-                DrawHitbox(&players[1].bomb.hitbox, GREEN); // Debugging
                 UpdateMovementHalfPhase(&players, GetFrameTime());
-                DrawMovementHalfPhase(&players);
 
                 if (IsMovementPhaseHalfComplete()) {
                     currentPhase = FIRING_COMMANDS;
@@ -255,13 +225,7 @@ void HandleGamePhases(){
                 break;
             }
             else{ // After firing commands
-                UpdateHitboxes();
-                DrawHitbox(&players[0].ship.hitbox, GREEN); // Debugging
-                DrawHitbox(&players[1].ship.hitbox, GREEN); // Debugging
-                DrawHitbox(&players[0].bomb.hitbox, GREEN); // Debugging
-                DrawHitbox(&players[1].bomb.hitbox, GREEN); // Debugging
                 UpdateMovementHalfPhase(&players, GetFrameTime());
-                DrawMovementHalfPhase(&players);
                 FiringCommandsDrawing(&players, &currentPlayerIndex);
                 if (IsMovementPhaseComplete()) {
                     // currentPhase = FINAL_EXCECUTION;
@@ -269,11 +233,6 @@ void HandleGamePhases(){
                 break;
             }
         case FIRING_COMMANDS:
-            UpdateHitboxes();
-            DrawHitbox(&players[0].ship.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[1].ship.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[0].bomb.hitbox, GREEN); // Debugging
-            DrawHitbox(&players[1].bomb.hitbox, GREEN); // Debugging
             FiringCommandsInput(&players, &currentPlayerIndex);
             FiringCommandsDrawing(&players, &currentPlayerIndex);
             if (players[0].hasFired && players[1].hasFired) currentPhase = MOVEMENT_HALF;
@@ -288,7 +247,10 @@ void HandleGamePhases(){
 }
 
 void Update(){
-    HandleGamePhases();
-
+    DrawBombs();
+    DrawShips();
     
+    HandleGamePhases();
+    UpdateHitboxes();
+    DrawHitboxes(); // Debugging
 }

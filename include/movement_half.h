@@ -4,7 +4,6 @@
 #include "game.h"
 
 void UpdateMovementHalfPhase(Player (*players)[2], float deltaTime);
-void DrawMovementHalfPhase(Player (*players)[2]);
 bool IsMovementPhaseHalfComplete();
 bool IsMovementPhaseComplete();
 

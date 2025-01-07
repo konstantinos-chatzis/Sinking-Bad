@@ -1,4 +1,3 @@
-#include "game.h"
 #include "movement_commands.h"
 
 // Global variables for textures
@@ -60,17 +59,6 @@ void ShipDirectionDrawing(Player (*players)[2], int* currentPlayerIndex){ // Thi
     else if (*currentPlayerIndex == 1 && !(*players)[1].hasSelectedDirection) {
         DrawText("Player 2", 50, 50, 50, RED);
         DrawText(", select your ship's direction!", 270, 50, 50, GRAY); // 220 units more that the previous.
-    }
-
-    for (int i = 0; i < 2; i++){
-        DrawTexturePro(
-            (*players)[i].ship.texture,
-            (Rectangle){0, 0, (*players)[i].ship.texture.width, (*players)[i].ship.texture.height},
-            (Rectangle){(*players)[i].ship.position.x, (*players)[i].ship.position.y, (*players)[i].ship.texture.width*5, (*players)[i].ship.texture.height*5},
-            (Vector2){((*players)[i].ship.texture.width*5)/2.0f, ((*players)[i].ship.texture.height*5)/2.0f},
-            (*players)[i].ship.rotation,
-            WHITE
-        );
     }
 }
 
@@ -144,7 +132,6 @@ void DrawShipSpeedSlider(Player* currentPlayer, float minSpeed, float maxSpeed, 
     );
 }
 
-
 void HandleShipSpeedInput(Player* player, float minSpeed, float maxSpeed, Rectangle sliderBounds) {
     if (!player->hasSelectedSpeed) {
         Vector2 mousePosition = GetMousePosition();
@@ -160,8 +147,6 @@ void HandleShipSpeedInput(Player* player, float minSpeed, float maxSpeed, Rectan
 }
 
 void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float minSpeed, float maxSpeed) {
-
-
     Player* currentPlayer = &(*players)[*currentPlayerIndex];
 
     // Display instructions for the current player
