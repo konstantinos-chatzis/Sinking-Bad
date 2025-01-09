@@ -13,10 +13,10 @@
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 #define SHIP_SCALE 5.0f
-#define BULLET_SCALE 2.5f
+#define BULLET_SCALE 2.0f
 #define BOMB_SCALE 2.0f
 
-#define BULLET_SPEED 1.5f
+#define BULLET_SPEED 2.0f
 
 #define SHORE_MARGIN 100 // Margin in pixels from the edge
 
@@ -63,6 +63,8 @@ typedef struct Player{
     bool hasSelectedDirection;
     bool hasSelectedSpeed;
     bool hasFired;
+    bool isHit;
+    int numLosses;
 } Player;
 
 

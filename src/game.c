@@ -7,51 +7,67 @@
 #include "firing_commands.h"
 #include "final_excecution.h"
 
-Player players[2] = {
-    {
-        .id=0,
-        .ship={
-            (Vector2){0, 0}, (Hitbox){(Rectangle){0, 0, 0, 0}}, 0.0f, 1.0f, 0.0f, BLUE
-        },
-        .bullet={
-            (Vector2){0, 0}, (Hitbox){(Rectangle){0, 0, 0, 0}}, 0.0f, 0.0f, .isActive=false
-        },
-        .color=BLUE,
-        .hasDeployed=false,
-        .hasSelectedDirection=false,
-        .hasSelectedSpeed=false
-    },
-    {
-        .id=1,
-        .ship={
-            (Vector2){0, 0}, (Hitbox){(Rectangle){0, 0, 0, 0}}, 0.0f, 1.0f, 0.0f, RED
-        },
-        .bullet={
-            (Vector2){0, 0}, (Hitbox){(Rectangle){0, 0, 0, 0}}, 0.0f, 0.0f, .isActive=false
-        },
-        .color=RED,
-        .hasDeployed=false,
-        .hasSelectedDirection=false,
-        .hasSelectedSpeed=false
-    },
-};
-
-Bomb bombs[3]={
-    {
-        (Vector2){100, 100}
-    },
-    {
-        (Vector2){300, 300}
-    },
-    {
-        (Vector2){600, 600}
-    }
-};
+Player players[2];
+Bomb bombs[3];
 
 int currentPlayerIndex = 0; // 0 for player 1 (BLUE), 1 for player 2 (RED)
 GamePhase currentPhase = SHIP_DEPLOYMENT;
 float originalShipRotation1;
 float originalShipRotation2;
+
+void InitPlayers(){
+    // Player 1
+    players[0].id = 0;
+    players[0].numLosses = 0;
+
+    players[0].ship.position = (Vector2){-1, -1};
+    players[0].ship.hitbox.rect = (Rectangle){0, 0, 0, 0};
+    players[0].ship.rotation = 0.0f;
+    players[0].ship.speed = 1.0f;
+    players[0].ship.acceleration = 0.0f;
+    players[0].ship.color = BLUE;
+
+    players[0].bullet.position = (Vector2){-1, -1};
+    players[0].bullet.hitbox.rect = (Rectangle){0, 0, 0, 0};
+    players[0].bullet.rotation = 0.0f;
+    players[0].bullet.speed = 0.0f;
+    players[0].bullet.isActive = false;
+
+    players[0].color = BLUE;
+    players[0].hasDeployed = false;
+    players[0].hasSelectedDirection = false;
+    players[0].hasSelectedSpeed = false;
+    players[0].hasFired = false;
+    
+    // Player 2
+    players[1].id = 1;
+    players[1].numLosses = 0;
+
+    players[1].ship.position = (Vector2){-1, -1};
+    players[1].ship.hitbox.rect = (Rectangle){0, 0, 0, 0};
+    players[1].ship.rotation = 0.0f;
+    players[1].ship.speed = 1.0f;
+    players[1].ship.acceleration = 0.0f;
+    players[1].ship.color = RED;
+
+    players[1].bullet.position = (Vector2){-1, -1};
+    players[1].bullet.hitbox.rect = (Rectangle){0, 0, 0, 0};
+    players[1].bullet.rotation = 0.0f;
+    players[1].bullet.speed = 0.0f;
+    players[1].bullet.isActive = false;
+
+    players[1].color = RED;
+    players[1].hasDeployed = false;
+    players[1].hasSelectedDirection = false;
+    players[1].hasSelectedSpeed = false;
+    players[1].hasFired = false;
+}
+
+void InitBombs(){
+    bombs[0].position = (Vector2){100, 100};
+    bombs[1].position = (Vector2){300, 300};
+    bombs[2].position = (Vector2){600, 600};
+}
 
 void InitHitboxes() {
     for (int i = 0; i < 2; i++) {
@@ -62,18 +78,18 @@ void InitHitboxes() {
         players[i].ship.hitbox.rect.height = players[i].ship.texture.height * SHIP_SCALE; // Multiply to scale
 
         // Bullet Hitboxes
-        players[i].bullet.hitbox.rect.x = players[i].bullet.position.x;
-        players[i].bullet.hitbox.rect.y = players[i].bullet.position.y;
-        players[i].bullet.hitbox.rect.width = players[i].bullet.texture.width * BULLET_SCALE * 0.3f;  // Multiply to scale. x0.3 to account for ship's square hitbox
-        players[i].bullet.hitbox.rect.height = players[i].bullet.texture.height * BULLET_SCALE * 0.3f; // Multiply to scale. x0.3 to account for ship's square hitbox
+        players[i].bullet.hitbox.rect.x = players[i].bullet.position.x - players[i].bullet.texture.width/ 2.0f;
+        players[i].bullet.hitbox.rect.y = players[i].bullet.position.y - players[i].bullet.texture.height / 2.0f;
+        players[i].bullet.hitbox.rect.width = players[i].bullet.texture.width+4; 
+        players[i].bullet.hitbox.rect.height = players[i].bullet.texture.height+4; 
     }
 
     for(int i = 0; i < 3; i++){
         // Bomb Hitboxes
-        bombs[i].hitbox.rect.x = bombs[i].position.x;
-        bombs[i].hitbox.rect.y = bombs[i].position.y;
-        bombs[i].hitbox.rect.width = bombs[i].texture.width * BOMB_SCALE * 0.3f;  // Multiply to scale. x0.3 to account for ship's square hitbox
-        bombs[i].hitbox.rect.height = bombs[i].texture.height * BOMB_SCALE *0.3f; // Multiply to scale. x0.3 to account for ship's square hitbox
+        bombs[i].hitbox.rect.x = bombs[i].position.x - bombs[i].texture.width * BOMB_SCALE / 2.0f;
+        bombs[i].hitbox.rect.y = bombs[i].position.y - bombs[i].texture.height * BOMB_SCALE / 2.0f;
+        bombs[i].hitbox.rect.width = bombs[i].texture.width * BOMB_SCALE;  
+        bombs[i].hitbox.rect.height = bombs[i].texture.height * BOMB_SCALE; 
     }
 }
 
@@ -126,8 +142,8 @@ void UpdateHitboxes() {
 
         // Bullet Hitboxes
         if (players[i].bullet.isActive) {
-            players[i].bullet.hitbox.rect.x = players[i].bullet.position.x;
-            players[i].bullet.hitbox.rect.y = players[i].bullet.position.y;
+            players[i].bullet.hitbox.rect.x = players[i].bullet.position.x - 10;
+            players[i].bullet.hitbox.rect.y = players[i].bullet.position.y - 10;
         } else {
             players[i].bullet.hitbox.rect.x = -1; // Out of bounds
             players[i].bullet.hitbox.rect.y = -1; // Out of bounds
@@ -168,7 +184,6 @@ void DrawShips(){
 }
 
 void DrawBullets(){
-
     for (int i = 0; i < 2; i++){
         if (players[i].bullet.isActive){
             DrawTexturePro(
@@ -204,6 +219,14 @@ void HandleGamePhases(){ // TODO: Change bomb / bullet mechanics
         case SHIP_DEPLOYMENT:
             ShipDeploymentInput(players, &currentPlayerIndex);
             ShipDeploymentDrawing(players, &currentPlayerIndex);
+
+            // // Debugging
+            // players[0].bullet.isActive = true;
+            // players[1].bullet.isActive = true;
+
+            // players[0].bullet.position = (Vector2){500, 500};
+            // players[1].bullet.position = (Vector2){500, 700};
+            
 
             if(players[0].hasDeployed && players[1].hasDeployed) currentPhase++;
             break;
@@ -256,19 +279,19 @@ void HandleGamePhases(){ // TODO: Change bomb / bullet mechanics
 
 // Start is called before the first frame update
 void Start(){
+    InitPlayers();
+    InitBombs();
     LoadGameTextures();
     InitHitboxes(); // Needs to be called after loading textures
 }
 
 // Update is called once per frame
 void Update(){
-    DrawLinesDebug();
-    DrawShips();
-    DrawBombs();
-    DrawBullets();
-    
     HandleGamePhases();
     UpdateHitboxes();
 
+    DrawBombs();
+    DrawShips();
+    DrawBullets();
     DrawHitboxes(); // Debugging
 }

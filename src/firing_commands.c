@@ -34,12 +34,21 @@ void UpdateBulletMovement(Player *players){
 }
 
 void FiringCommandsDrawing(Player *players, int* currentPlayerIndex){
-    if (*currentPlayerIndex == 0 && !players[0].hasFired) {
-        DrawText("Player 1", 50, 50, 50, BLUE);
-        DrawText(", fire your bullet!", 255, 50, 50, GRAY); // 205 units more that the previous.
-    } 
-    else if (*currentPlayerIndex == 1 && !players[1].hasFired) {
-        DrawText("Player 2", 50, 50, 50, RED);
-        DrawText(", fire your bullet!", 270, 50, 50, GRAY); // 220 units more that the previous.
+    Player *currentPlayer = &players[*currentPlayerIndex];
+
+    if (!currentPlayer->hasFired){
+        if (*currentPlayerIndex == 0) {
+            DrawText("Player 1", 50, 50, 50, BLUE);
+            DrawText(", fire your bullet!", 255, 50, 50, GRAY); // 205 units more that the previous.
+        } 
+        else if (*currentPlayerIndex == 1) {
+            DrawText("Player 2", 50, 50, 50, RED);
+            DrawText(", fire your bullet!", 270, 50, 50, GRAY); // 220 units more that the previous.
+        }
+
+        // Draw aiming line
+        Vector2 mousePosition = GetMousePosition();
+        DrawLineEx(currentPlayer->ship.position, mousePosition, 2.0f, GRAY);
+        DrawCircleV(mousePosition, 5, GRAY);
     }
 }
