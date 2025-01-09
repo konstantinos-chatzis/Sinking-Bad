@@ -3,7 +3,7 @@
 
 #include "game.h"
 
-void UpdateMovementHalfPhase(Player (*players)[2], float deltaTime);
+void UpdateMovementHalfPhase(Player *players, float deltaTime);
 bool IsMovementPhaseHalfComplete();
 bool IsMovementPhaseComplete();
 

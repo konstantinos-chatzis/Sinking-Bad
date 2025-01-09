@@ -5,8 +5,8 @@ int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sea Duel");
     SetTargetFPS(60);
 
-    LoadGameTextures();
-    InitHitboxes();
+    Start();
+
 
 // Update.
     while (!WindowShouldClose()) {

@@ -3,7 +3,8 @@
 
 #include "game.h"
 
-void FiringCommandsInput(Player (*players)[2], int* currentPlayerIndex);
-void FiringCommandsDrawing(Player (*players)[2], int* currentPlayerIndex);
+void FiringCommandsInput(Player *players, int* currentPlayerIndex);
+void FiringCommandsDrawing(Player *players, int* currentPlayerIndex);
+void UpdateBulletMovement(Player *players);
 
 #endif // FIRING_COMMANDS_H

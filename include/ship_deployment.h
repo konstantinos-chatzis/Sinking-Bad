@@ -3,8 +3,8 @@
 
 #include "game.h"
 
-void ShipDeploymentInput(Player (*players)[2], int* currentPlayerIndex);
-void ShipDeploymentDrawing(Player (*players)[2], int* currentPlayerIndex);
+void ShipDeploymentInput(Player *players, int* currentPlayerIndex);
+void ShipDeploymentDrawing(Player *players, int* currentPlayerIndex);
 
 
 #endif

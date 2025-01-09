@@ -11,11 +11,11 @@
 #define BUTTON_SCALE 5
 
 // Direction Selection Functions
-void ShipDirectionInput(Player (*players)[2], int* currentPlayerIndex);
-void ShipDirectionDrawing(Player (*players)[2], int* currentPlayerIndex);
+void ShipDirectionInput(Player *players, int* currentPlayerIndex);
+void ShipDirectionDrawing(Player *players, int* currentPlayerIndex);
 
 // Speed Selection Functions
-void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float minSpeed, float maxSpeed);
+void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSpeed, float maxSpeed);
 
 // Texture Loading Functions
 void LoadSpeedSelectionTextures();

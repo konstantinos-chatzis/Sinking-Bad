@@ -13,18 +13,19 @@
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 #define SHIP_SCALE 5.0f
-#define BOMB_SCALE 1.5f
+#define BULLET_SCALE 2.5f
+#define BOMB_SCALE 2.0f
+
+#define BULLET_SPEED 1.5f
+
+#define SHORE_MARGIN 100 // Margin in pixels from the edge
 
 // Enums
-typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_COMMANDS, MOVEMENT_HALF, FIRING_COMMANDS, MOVEMENT_REST, FINAL_EXCECUTION, RESULTS} GamePhase;
+typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_COMMANDS, MOVEMENT_HALF, FIRING_COMMANDS, FINAL_EXCECUTION, RESULTS} GamePhase;
 
 //Structs
 typedef struct Hitbox {
-    float x;
-    float y;
-    float width;
-    float height;
-    float rotation;
+    Rectangle rect;
 } Hitbox;
 
 typedef struct Ship {
@@ -37,18 +38,26 @@ typedef struct Ship {
     Texture2D texture;
 } Ship;
 
+typedef struct Bullet {
+    Vector2 position;
+    Hitbox hitbox;
+    float rotation;
+    float speed;
+    bool isActive;
+    Texture2D texture;
+} Bullet;
+    
+
 typedef struct Bomb {
     Vector2 position;
     Hitbox hitbox;
-    bool isVisible;
-    bool isActive;
     Texture2D texture;
 } Bomb;
 
 typedef struct Player{
     int id;
     Ship ship;
-    Bomb bomb;
+    Bullet bullet;
     Color color;
     bool hasDeployed;
     bool hasSelectedDirection;
@@ -58,9 +67,9 @@ typedef struct Player{
 
 
 // Functions
-void InitHitboxes();
+void Start();
 void Update();
-void LoadGameTextures();
+
 void UnloadGameTextures();
 
 #endif // GAME_H
