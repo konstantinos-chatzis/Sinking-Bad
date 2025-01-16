@@ -11,7 +11,7 @@ int main() {
 // Update.
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        
 
         Update();
 

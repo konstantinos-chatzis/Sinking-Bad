@@ -1,5 +1,4 @@
-#include <game.h>
-#include <phase_movement_commands.h>
+#include "movement_directions.h"
 
 // Global variables for textures
 Texture2D sliderBackground;
@@ -10,6 +9,8 @@ Texture2D sliderKnob;
 Texture2D buttonNormal;
 Texture2D buttonHover;
 Texture2D buttonClick;
+
+float selectedSpeed = 1.0f;
 
 // Function to load textures (call this at the beginning of your program)
 void LoadSpeedSelectionTextures() {
@@ -37,8 +38,8 @@ void UnloadSpeedSelectionTextures() {
     UnloadTexture(buttonClick);
 }
 
-void ShipDirectionInput(Player (*players)[2], int* currentPlayerIndex){
-    Player* currentPlayer = &(*players)[*currentPlayerIndex];
+void ShipDirectionInput(Player *players, int* currentPlayerIndex){
+    Player* currentPlayer = &players[*currentPlayerIndex];
     if (!currentPlayer->hasSelectedDirection){
         Vector2 mousePosition = GetMousePosition();
         currentPlayer->ship.rotation = atan2(currentPlayer->ship.position.y - mousePosition.y, currentPlayer->ship.position.x - mousePosition.x)*RAD2DEG+90;
@@ -50,33 +51,20 @@ void ShipDirectionInput(Player (*players)[2], int* currentPlayerIndex){
     }
 }
 
-void ShipDirectionDrawing(Player (*players)[2], int* currentPlayerIndex){ // This function goes in UpdateGameDraw() in game.c | (*players)[2] is a pointer to the entire array
-    if (*currentPlayerIndex == 0 && !(*players)[0].hasSelectedDirection) {
-        DrawText("Player 1", 50, 50, 50, BLUE);
-        DrawText(", select your ship's direction!", 255, 50, 50, GRAY); // 205 units more that the previous.
+void ShipDirectionDrawing(Player *players, int* currentPlayerIndex){ // This function goes in UpdateGameDraw() in game.c | (*players)[2] is a pointer to the entire array
+    if (*currentPlayerIndex == 0 && !players[0].hasSelectedDirection) {
+        DrawText("Player 1", 50, 40, 50, BLUE);
+        DrawText(", select your ship's direction!", 255, 40, 50, RAYWHITE); // 205 units more that the previous.
     } 
-    else if (*currentPlayerIndex == 1 && !(*players)[1].hasSelectedDirection) {
-        DrawText("Player 2", 50, 50, 50, RED);
-        DrawText(", select your ship's direction!", 270, 50, 50, GRAY); // 220 units more that the previous.
-    }
-
-    for (int i = 0; i < 2; i++){
-        DrawTexturePro(
-            (*players)[i].ship.texture,
-            (Rectangle){0, 0, (*players)[i].ship.texture.width, (*players)[i].ship.texture.height},
-            (Rectangle){(*players)[i].ship.position.x, (*players)[i].ship.position.y, (*players)[i].ship.texture.width*5, (*players)[i].ship.texture.height*5},
-            (Vector2){((*players)[i].ship.texture.width*5)/2.0f, ((*players)[i].ship.texture.height*5)/2.0f},
-            (*players)[i].ship.rotation,
-            WHITE
-        );
+    else if (*currentPlayerIndex == 1 && !players[1].hasSelectedDirection) {
+        DrawText("Player 2", 50, 40, 50, RED);
+        DrawText(", select your ship's direction!", 270, 40, 50, RAYWHITE); // 220 units more that the previous.
     }
 }
 
-
-
 void DrawShipSpeedSlider(Player* currentPlayer, float minSpeed, float maxSpeed, Rectangle sliderBounds) {
     // Calculate the slider fill height based on the current speed
-    float sliderFillHeight = ((currentPlayer->ship.speed - minSpeed) / (maxSpeed - minSpeed)) * sliderBounds.height;
+    float sliderFillHeight = ((selectedSpeed - minSpeed) / (maxSpeed - minSpeed)) * sliderBounds.height;
 
     // Draw custom slider background
     DrawTexturePro(
@@ -136,57 +124,55 @@ void DrawShipSpeedSlider(Player* currentPlayer, float minSpeed, float maxSpeed, 
 
     // Draw speed text
     DrawText(
-        TextFormat("Speed: %.1f", currentPlayer->ship.speed),
-        sliderBounds.x + sliderBounds.width + 10,
-        sliderBounds.y,
+        TextFormat("Speed: %.1f", selectedSpeed),
+        (sliderBounds.x + sliderBounds.width + 10) -75,
+        (sliderBounds.y) -30,
         20,
         DARKGRAY
     );
 }
-
 
 void HandleShipSpeedInput(Player* player, float minSpeed, float maxSpeed, Rectangle sliderBounds) {
     if (!player->hasSelectedSpeed) {
         Vector2 mousePosition = GetMousePosition();
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mousePosition, sliderBounds)) {
             float mouseOffset = sliderBounds.y + sliderBounds.height - mousePosition.y;
-            player->ship.speed = minSpeed + (maxSpeed - minSpeed) * (mouseOffset / sliderBounds.height);
+            selectedSpeed = minSpeed + (maxSpeed - minSpeed) * (mouseOffset / sliderBounds.height);
 
             // Clamp speed within range
-            if (player->ship.speed < minSpeed) player->ship.speed = minSpeed;
-            if (player->ship.speed > maxSpeed) player->ship.speed = maxSpeed;
+            if (selectedSpeed < minSpeed) selectedSpeed = minSpeed;
+            if (selectedSpeed > maxSpeed) selectedSpeed = maxSpeed;
         }
     }
 }
 
-void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float minSpeed, float maxSpeed) {
-
-
-    Player* currentPlayer = &(*players)[*currentPlayerIndex];
+void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSpeed, float maxSpeed) {
+    Player* currentPlayer = &players[*currentPlayerIndex];
 
     // Display instructions for the current player
-    if (*currentPlayerIndex == 0 && !(*players)[0].hasSelectedSpeed) {
-        DrawText("Player 1", 50, 50, 50, BLUE);
-        DrawText(", select your ship's speed!", 255, 50, 50, GRAY);
-    } else if (*currentPlayerIndex == 1 && !(*players)[1].hasSelectedSpeed) {
-        DrawText("Player 2", 50, 50, 50, RED);
-        DrawText(", select your ship's speed!", 270, 50, 50, GRAY);
+    if (*currentPlayerIndex == 0 && !players[0].hasSelectedSpeed) {
+        DrawText("Player 1", 50, 40, 50, BLUE);
+        DrawText(", select your ship's speed!", 255, 40, 50, RAYWHITE);
+    } else if (*currentPlayerIndex == 1 && !players[1].hasSelectedSpeed) {
+        DrawText("Player 2", 50, 40, 50, RED);
+        DrawText(", select your ship's speed!", 270, 40, 50, RAYWHITE);
     }
 
     // Slider logic
-    Rectangle sliderBounds = {100, 200, 40, 400};
+    Rectangle sliderBounds = {45, 300, 40, 400};
     HandleShipSpeedInput(currentPlayer, minSpeed, maxSpeed, sliderBounds);
     DrawShipSpeedSlider(currentPlayer, minSpeed, maxSpeed, sliderBounds);
 
     // Draw confirmation button
     static bool buttonClicked = false;
     Rectangle buttonBounds = {
-        sliderBounds.x,
+        sliderBounds.x - 40,
         sliderBounds.y + sliderBounds.height + 20,
-        buttonNormal.width * 5,
-        buttonNormal.height * 5
+        buttonNormal.width * 4,
+        buttonNormal.height * 4
     };
     Vector2 mousePosition = GetMousePosition();
+
 
     if (CheckCollisionPointRec(mousePosition, buttonBounds)) {
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
@@ -201,8 +187,10 @@ void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float 
             buttonClicked = true; 
         } else if (buttonClicked && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             // Button action is triggered only when the mouse is released over the button
+            currentPlayer->ship.speed = selectedSpeed;
             currentPlayer->hasSelectedSpeed = true;
             *currentPlayerIndex = (*currentPlayerIndex + 1) % 2;
+            selectedSpeed = 1.0f; // Reset the selected speed
             buttonClicked = false;
 
         } else {
@@ -228,4 +216,5 @@ void ShipSpeedInputDrawing(Player (*players)[2], int* currentPlayerIndex, float 
             buttonClicked = false; // Reset the button state if the mouse is released outside
         }
     }
+    DrawText("Select", buttonBounds.x + 17, buttonBounds.y + 18, 30, DARKGRAY);
 }

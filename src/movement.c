@@ -1,7 +1,6 @@
-#include <game.h>
-#include <movement_half.h>
+#include <movement.h>
 
-float movementTime = 10.0f; // Time in seconds for the phase
+float timer = 10.0f; // Time in seconds for the phase
 float elapsedTime = 0.0f; // Time elapsed since the start of the phase
 
 float ComputeAcceleration(float initialSpeed, float D_min, float D_max, float k, float p) {
@@ -12,13 +11,12 @@ float ComputeAcceleration(float initialSpeed, float D_min, float D_max, float k,
     return -requiredDeceleration; // Always negative
 }
 
-
-void UpdateMovementHalfPhase(Player *players, float deltaTime) {
+void UpdateMovement(Player *players, float deltaTime) {
     elapsedTime += deltaTime;
     if (elapsedTime >= 1.0f) {
-        if (movementTime > 0.0f) { // Decrease time until it reaches 0
-            printf("Movement Half Phase Time: %.1f\n", movementTime);
-            movementTime -= 1.0f;
+        if (timer > 0.0f) { // Decrease time until it reaches 0
+            printf("Movement Half Phase Time: %.1f\n", timer);
+            timer -= 1.0f;
             elapsedTime = 0.0f;
         }
     }
@@ -49,21 +47,10 @@ void UpdateMovementHalfPhase(Player *players, float deltaTime) {
             players[i].ship.position.x += dx;
             players[i].ship.position.y += dy;
 
-            // Check boundaries
-            if (players[i].ship.position.x < SHORE_MARGIN) {
-                players[i].ship.position.x = SHORE_MARGIN;
-                players[i].ship.speed = 0; // Stop the ship (or reverse direction if desired)
-            }
-            if (players[i].ship.position.x > (SCREEN_WIDTH - SHORE_MARGIN)) {
-                players[i].ship.position.x = SCREEN_WIDTH - SHORE_MARGIN;
-                players[i].ship.speed = 0;
-            }
-            if (players[i].ship.position.y < SHORE_MARGIN) {
-                players[i].ship.position.y = SHORE_MARGIN;
-                players[i].ship.speed = 0;
-            }
-            if (players[i].ship.position.y > (SCREEN_HEIGHT - SHORE_MARGIN)) {
-                players[i].ship.position.y = SCREEN_HEIGHT - SHORE_MARGIN;
+            // Check if ship is within the movement zone
+            if (!CheckCollisionHitboxes(&players[i].ship.hitbox, &players[i].movementAvailableZone)) {
+                players[i].ship.position.x -= dx;
+                players[i].ship.position.y -= dy;
                 players[i].ship.speed = 0;
             }
         }
@@ -72,12 +59,12 @@ void UpdateMovementHalfPhase(Player *players, float deltaTime) {
 
 bool IsMovementPhaseHalfComplete() {
     
-    if (movementTime <= 5) return true;
+    if (timer <= 5) return true;
     else return false;
 }
 
 bool IsMovementPhaseComplete() {
-    if (movementTime <= 0) return true;
+    if (timer <= 0) return true;
     else return false;
 }
 

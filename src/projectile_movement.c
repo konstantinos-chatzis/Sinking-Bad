@@ -1,4 +1,4 @@
-#include "firing_commands.h"
+#include "projectile_movement.h"
 
 void FiringCommandsInput(Player *players, int* currentPlayerIndex){
     Player* currentPlayer = &players[*currentPlayerIndex];
@@ -7,11 +7,11 @@ void FiringCommandsInput(Player *players, int* currentPlayerIndex){
         currentPlayer->ship.rotation = atan2(currentPlayer->ship.position.y - mousePosition.y, currentPlayer->ship.position.x - mousePosition.x)*RAD2DEG+90;
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
-            // Set bullet position
-            currentPlayer->bullet.position = currentPlayer->ship.position;
+            // Set projectile position
+            currentPlayer->projectile.position = currentPlayer->ship.position;
 
-            // Set bullet rotation (direction)
-            currentPlayer->bullet.rotation = currentPlayer->ship.rotation;
+            // Set projectile rotation (direction)
+            currentPlayer->projectile.rotation = currentPlayer->ship.rotation;
 
             currentPlayer->hasFired = true;
             *currentPlayerIndex = (*currentPlayerIndex + 1) % 2;
@@ -19,16 +19,20 @@ void FiringCommandsInput(Player *players, int* currentPlayerIndex){
     }
 }
 
-void UpdateBulletMovement(Player *players){
+void UpdateProjectileMovement(Player *players){
     for (int i = 0; i < 2; i++){
         if (players[i].hasFired){
-            // Calculate bullet movement based on rotation and speed
-            float dx = cos(players[i].bullet.rotation * DEG2RAD + 90*DEG2RAD) * BULLET_SPEED;
-            float dy = sin(players[i].bullet.rotation * DEG2RAD + 90*DEG2RAD) * BULLET_SPEED;
+            // Calculate projectile movement based on rotation and speed
+            float dx = cos(players[i].projectile.rotation * DEG2RAD + 90*DEG2RAD) * PROJECTILE_SPEED;
+            float dy = sin(players[i].projectile.rotation * DEG2RAD + 90*DEG2RAD) * PROJECTILE_SPEED;
 
-            // Update bullet position
-            players[i].bullet.position.x += dx;
-            players[i].bullet.position.y += dy;
+            // Update projectile position
+            players[i].projectile.position.x += dx;
+            players[i].projectile.position.y += dy;
+
+            if(!CheckCollisionHitboxes(&players[i].projectile.hitbox, &players[i].projectile.movementAvailableZone)){
+                players[i].projectile.isOutOfBounds = true;
+            } 
         }
     }
 }
@@ -39,11 +43,11 @@ void FiringCommandsDrawing(Player *players, int* currentPlayerIndex){
     if (!currentPlayer->hasFired){
         if (*currentPlayerIndex == 0) {
             DrawText("Player 1", 50, 50, 50, BLUE);
-            DrawText(", fire your bullet!", 255, 50, 50, GRAY); // 205 units more that the previous.
+            DrawText(", fire your projectile!", 255, 50, 50, GRAY); // 205 units more that the previous.
         } 
         else if (*currentPlayerIndex == 1) {
             DrawText("Player 2", 50, 50, 50, RED);
-            DrawText(", fire your bullet!", 270, 50, 50, GRAY); // 220 units more that the previous.
+            DrawText(", fire your projectile!", 270, 50, 50, GRAY); // 220 units more that the previous.
         }
 
         // Draw aiming line

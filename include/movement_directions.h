@@ -1,5 +1,5 @@
-#ifndef MOVEMENT_COMMANDS_H
-#define MOVEMENT_COMMANDS_H
+#ifndef MOVEMENT_DIRECTIONS_H
+#define MOVEMENT_DIRECTIONS_H
 
 #include "game.h"
 

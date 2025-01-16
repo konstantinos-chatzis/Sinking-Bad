@@ -7,21 +7,26 @@
 #include <math.h>
 #include <float.h>
 #include <stdio.h>
-#include <stdbool.h>
+#include <stdbool.h> 
 
 // Constants
-#define SCREEN_WIDTH 1600
-#define SCREEN_HEIGHT 900
+#define SCREEN_WIDTH 1760
+#define SCREEN_HEIGHT 990
 #define SHIP_SCALE 5.0f
-#define BULLET_SCALE 2.0f
+#define PROJECTILE_SCALE 2.0f
 #define BOMB_SCALE 2.0f
 
-#define BULLET_SPEED 2.0f
+#define PROJECTILE_SPEED 1.8f
 
-#define SHORE_MARGIN 100 // Margin in pixels from the edge
+#define MARGIN_LEFT 100 // Margin in pixels from the left
+#define MARGIN_TOP 100 // Margin in pixels from the top
+
+// Global Variables
+extern bool isRoundOver;
+extern float timer;
 
 // Enums
-typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_COMMANDS, MOVEMENT_HALF, FIRING_COMMANDS, FINAL_EXCECUTION, RESULTS} GamePhase;
+typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_DIRECTIONS, MOVEMENT, PROJECTILE_MOVEMENT, ROUND_HANDLING, RESULTS} GamePhase;
 
 //Structs
 typedef struct Hitbox {
@@ -38,14 +43,16 @@ typedef struct Ship {
     Texture2D texture;
 } Ship;
 
-typedef struct Bullet {
+typedef struct Projectile {
     Vector2 position;
     Hitbox hitbox;
     float rotation;
     float speed;
     bool isActive;
     Texture2D texture;
-} Bullet;
+    Hitbox movementAvailableZone;
+    bool isOutOfBounds;
+} Projectile;
     
 
 typedef struct Bomb {
@@ -57,20 +64,23 @@ typedef struct Bomb {
 typedef struct Player{
     int id;
     Ship ship;
-    Bullet bullet;
+    Projectile projectile;
     Color color;
     bool hasDeployed;
     bool hasSelectedDirection;
     bool hasSelectedSpeed;
     bool hasFired;
     bool isHit;
-    int numLosses;
+    int score;
+    Hitbox deploymentZone;
+    Hitbox movementAvailableZone;
 } Player;
-
 
 // Functions
 void Start();
 void Update();
+
+bool CheckCollisionHitboxes(const Hitbox *hitbox1, const Hitbox *hitbox2);
 
 void UnloadGameTextures();
 

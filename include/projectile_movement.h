@@ -1,10 +1,10 @@
-#ifndef FIRING_COMMANDS_H
-#define FIRING_COMMANDS_H
+#ifndef PROJECTILE_MOVEMENT_H
+#define PROJECTILE_MOVEMENT_H
 
 #include "game.h"
 
 void FiringCommandsInput(Player *players, int* currentPlayerIndex);
 void FiringCommandsDrawing(Player *players, int* currentPlayerIndex);
-void UpdateBulletMovement(Player *players);
+void UpdateProjectileMovement(Player *players);
 
-#endif // FIRING_COMMANDS_H
+#endif // PROJECTILE_MOVEMENT_H
