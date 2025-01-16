@@ -2,6 +2,7 @@
 #define MOVEMENT_DIRECTIONS_H
 
 #include "game.h"
+#include "hud.h"
 
 // Constants
 #define SLIDER_WIDTH 40

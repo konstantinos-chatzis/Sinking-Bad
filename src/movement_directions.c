@@ -12,7 +12,7 @@ Texture2D buttonClick;
 
 float selectedSpeed = 1.0f;
 
-// Function to load textures (call this at the beginning of your program)
+// Function to load textures
 void LoadSpeedSelectionTextures() {
     // Slider textures
     sliderBackground = LoadTexture("assets/sprites/slider_bar_background.png");
@@ -25,7 +25,7 @@ void LoadSpeedSelectionTextures() {
     buttonClick = LoadTexture("assets/sprites/button_clicked.png");
 }
 
-// Function to unload textures (call this at the end of your program)
+// Function to unload textures
 void UnloadSpeedSelectionTextures() {
     // Slider textures
     UnloadTexture(sliderBackground);
@@ -163,58 +163,11 @@ void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSp
     HandleShipSpeedInput(currentPlayer, minSpeed, maxSpeed, sliderBounds);
     DrawShipSpeedSlider(currentPlayer, minSpeed, maxSpeed, sliderBounds);
 
-    // Draw confirmation button
-    static bool buttonClicked = false;
-    Rectangle buttonBounds = {
-        sliderBounds.x - 40,
-        sliderBounds.y + sliderBounds.height + 20,
-        buttonNormal.width * 4,
-        buttonNormal.height * 4
-    };
-    Vector2 mousePosition = GetMousePosition();
-
-
-    if (CheckCollisionPointRec(mousePosition, buttonBounds)) {
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-            DrawTexturePro(
-                buttonClick,
-                (Rectangle){0, 0, buttonClick.width, buttonClick.height},
-                buttonBounds,
-                (Vector2){0, 0},
-                0.0f,
-                WHITE
-            );
-            buttonClicked = true; 
-        } else if (buttonClicked && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-            // Button action is triggered only when the mouse is released over the button
-            currentPlayer->ship.speed = selectedSpeed;
-            currentPlayer->hasSelectedSpeed = true;
-            *currentPlayerIndex = (*currentPlayerIndex + 1) % 2;
-            selectedSpeed = 1.0f; // Reset the selected speed
-            buttonClicked = false;
-
-        } else {
-            DrawTexturePro(
-                buttonHover,
-                (Rectangle){0, 0, buttonHover.width, buttonHover.height},
-                buttonBounds,
-                (Vector2){0, 0},
-                0.0f,
-                WHITE
-            );
-        }
-    } else {
-        DrawTexturePro(
-            buttonNormal,
-            (Rectangle){0, 0, buttonNormal.width, buttonNormal.height},
-            buttonBounds,
-            (Vector2){0, 0},
-            0.0f,
-            WHITE
-        );
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-            buttonClicked = false; // Reset the button state if the mouse is released outside
-        }
+    if(DrawButton(sliderBounds.x - 40, sliderBounds.y + sliderBounds.height + 20, 4, 4, &buttonNormal, &buttonHover, &buttonClick, "Select")) {
+        // Button action is triggered only when the mouse is released over the button
+        currentPlayer->ship.speed = selectedSpeed;
+        currentPlayer->hasSelectedSpeed = true;
+        *currentPlayerIndex = (*currentPlayerIndex + 1) % 2;
+        selectedSpeed = 1.0f; // Reset the selected speed
     }
-    DrawText("Select", buttonBounds.x + 17, buttonBounds.y + 18, 30, DARKGRAY);
 }
