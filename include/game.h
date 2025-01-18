@@ -81,6 +81,7 @@ void Start();
 void Update();
 
 bool CheckCollisionHitboxes(const Hitbox *hitbox1, const Hitbox *hitbox2);
+void ActionBackToTitle();
 
 void UnloadGameTextures();
 

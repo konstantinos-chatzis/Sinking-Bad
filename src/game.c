@@ -8,15 +8,17 @@
 #include "round_handler.h"
 #include "hud.h"
 #include "title_screen.h"
+#include "pause_menu.h"
 
 Player players[2];
 Bomb bombs[4];
 
 int currentPlayerIndex = 0; // 0 for player 1 (BLUE), 1 for player 2 (RED)
-GamePhase currentPhase = SHIP_DEPLOYMENT;
+GamePhase currentPhase = TITLE_SCREEN;
 bool isRoundOver = false;
 float originalShipRotation1;
 float originalShipRotation2;
+bool isGamePaused = false;
 
 // HUD
 Texture backgroundTexture;
@@ -24,8 +26,9 @@ Button playButton;
 Button loadButton;
 Button quitButton;
 Button selectButton;
-Button backToTitleButton;
+Button gameOverBackToTitleButton;
 Button saveButton;
+Button pauseMenuBackToTitleButton;
 
 // Variables for animation (at victory screen)
 Vector2 animatedPosition = { 700, 400 };
@@ -122,13 +125,20 @@ void InitHitboxes() {
 }
 
 void InitButtons() {
+    // Title Screen
     playButton = CreateButton(816, 300, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Play");
     loadButton = CreateButton(816, 400, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Load");
     quitButton = CreateButton(816, 500, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Quit");
 
+    // Speed selection
     selectButton = CreateButton(5, 720, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Select");
 
-    backToTitleButton = CreateButton(752, 600, 256, 64, &buttonNormal, &buttonHover, &buttonClick, "Back To Title");
+    // Game Over
+    gameOverBackToTitleButton = CreateButton(752, 600, 256, 64, &buttonNormal, &buttonHover, &buttonClick, "Back to Title");
+
+    // Pause Menu
+    saveButton = CreateButton(815, 350, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Save");
+    pauseMenuBackToTitleButton = CreateButton(751, 500, 256, 64, &buttonNormal, &buttonHover, &buttonClick, "Back to Title");
 }
 
 Texture2D LoadShipTexture(Color color) {
@@ -160,6 +170,7 @@ void LoadGameTextures() {
         bombs[i].texture = LoadTexture("assets/sprites/bomb.png");
     }
     LoadSpeedSelectionTextures();
+    LoadPauseTextures();
     LoadHUDTextures();
     backgroundTexture = LoadTexture("assets/sprites/background.png");
 }
@@ -173,6 +184,7 @@ void UnloadGameTextures() {
         UnloadTexture(bombs[i].texture);
     }
     UnloadSpeedSelectionTextures();
+    UnloadPauseTextures();
     UnloadHUDTextures();
     UnloadTexture(backgroundTexture);
 }
@@ -290,7 +302,22 @@ bool CheckGameIsOver(Player *players) {
     } else return false;
 }
 
+void ActionBackToTitle() {
+    ResetRound(players);
+    for (int i = 0; i < 2; i++)
+    {
+        players[i].score = 0;
+    }
+    
+    currentPhase = TITLE_SCREEN;
+}
+
 void HandleGamePhases() {
+    if (isGamePaused && (currentPhase !=TITLE_SCREEN || currentPhase != ROUND_HANDLING)) {
+        DrawPauseMenu(&saveButton, &pauseMenuBackToTitleButton);
+        return;  // Skip all game logic updates while paused
+    }
+
     switch (currentPhase) {
         case TITLE_SCREEN:
             DrawTitleScreen(&currentPhase, &playButton, &loadButton, &quitButton);
@@ -397,14 +424,15 @@ void Update() {
             isRoundOver = false;
         }
 
-        HandleGamePhases();
         UpdateHitboxes();
 
         DrawBombs();
         DrawShips();
         DrawProjectiles();
+        HandleGamePhases();
 
         // PauseMenu
+        if (IsKeyPressed(KEY_ESCAPE)) isGamePaused = !isGamePaused; // Toggle pause state
 
         DrawHitboxes(); // Debugging
     } else if(CheckGameIsOver(players)) {
@@ -420,14 +448,8 @@ void Update() {
             DrawText(" has won the game! Congratulations!", 260, 350, 70, YELLOW);
         }
 
-        if(UpdateAndDrawButton(&backToTitleButton)) {
-            ResetRound(players);
-            for (int i = 0; i < 2; i++)
-            {
-                players[1].score = 0;
-            }
-            
-            currentPhase = TITLE_SCREEN;
+        if(UpdateAndDrawButton(&gameOverBackToTitleButton)) {
+            ActionBackToTitle();
         }
     }
 }
