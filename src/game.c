@@ -13,7 +13,7 @@ Player players[2];
 Bomb bombs[4];
 
 int currentPlayerIndex = 0; // 0 for player 1 (BLUE), 1 for player 2 (RED)
-GamePhase currentPhase = TITLE_SCREEN;
+GamePhase currentPhase = SHIP_DEPLOYMENT;
 bool isRoundOver = false;
 float originalShipRotation1;
 float originalShipRotation2;
@@ -24,6 +24,8 @@ Button playButton;
 Button loadButton;
 Button quitButton;
 Button selectButton;
+Button backToTitleButton;
+Button saveButton;
 
 // Variables for animation (at victory screen)
 Vector2 animatedPosition = { 700, 400 };
@@ -89,10 +91,10 @@ void InitPlayers() {
 }
 
 void InitBombs() {
-    bombs[0].position = (Vector2){100, 100};
-    bombs[1].position = (Vector2){300, 300};
-    bombs[2].position = (Vector2){600, 600};
-    bombs[3].position = (Vector2){900, 900};
+    bombs[0].position = (Vector2){750, 200};
+    bombs[1].position = (Vector2){1050, 400};
+    bombs[2].position = (Vector2){750, 600};
+    bombs[3].position = (Vector2){1050, 800};
 }
 
 void InitHitboxes() {
@@ -125,6 +127,8 @@ void InitButtons() {
     quitButton = CreateButton(816, 500, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Quit");
 
     selectButton = CreateButton(5, 720, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Select");
+
+    backToTitleButton = CreateButton(752, 600, 256, 64, &buttonNormal, &buttonHover, &buttonClick, "Back To Title");
 }
 
 Texture2D LoadShipTexture(Color color) {
@@ -281,11 +285,7 @@ void ResetRound(Player *players) {
 }
 
 bool CheckGameIsOver(Player *players) {
-    if (players[0].score == 3) {
-        printf("Player 1 won the game!\n");
-        return true;
-    } else if (players[1].score == 3) {
-        printf("Player 2 won the game!\n");
+    if (players[0].score == 3 || players[1].score == 3) {
         return true;
     } else return false;
 }
@@ -332,7 +332,20 @@ void HandleGamePhases() {
             } 
             break;
         case ROUND_HANDLING:
-            if (players[0].projectile.isOutOfBounds && players[1].projectile.isOutOfBounds) isRoundOver = true;
+            if (players[0].projectile.isOutOfBounds && players[1].projectile.isOutOfBounds){
+                timer = 10.0f;
+                for (int i = 0; i < 2; i++)
+                {
+                    players[i].hasSelectedDirection = false;
+                    players[i].hasSelectedSpeed = false;
+                    players[i].hasFired = false;
+                    players[i].projectile.isActive = false;
+                    players[i].projectile.isOutOfBounds = false;
+                }
+                
+                currentPhase = MOVEMENT_DIRECTIONS;
+                break;
+            } 
             CheckRoundWinCondition(players);
             UpdateMovement(players, GetFrameTime());
             UpdateProjectileMovement(players);
@@ -370,6 +383,7 @@ void Start() {
 // Update is called once per frame
 void Update() {
     ClearBackground(LIGHTGRAY);
+
     if (currentPhase == TITLE_SCREEN) {
         HandleGamePhases();
     }
@@ -386,22 +400,34 @@ void Update() {
         HandleGamePhases();
         UpdateHitboxes();
 
-        // DrawBombs();
+        DrawBombs();
         DrawShips();
         DrawProjectiles();
+
+        // PauseMenu
 
         DrawHitboxes(); // Debugging
     } else if(CheckGameIsOver(players)) {
         if(players[0].score == 3){
             UpdateAnimatedPlayer(GetFrameTime());
             DrawTextureEx(players[0].ship.texture, animatedPosition, animatedRotation, 10, WHITE);
-            DrawText("Player 1", 700, 250, 70, BLUE);
-            DrawText(" has won the game! Congratulations!", 220, 350, 70, YELLOW);
+            DrawText("Player 1", 740, 250, 70, BLUE);
+            DrawText(" has won the game! Congratulations!", 260, 350, 70, YELLOW);
         } else if (players[1].score == 3) {
             UpdateAnimatedPlayer(GetFrameTime());
             DrawTextureEx(players[1].ship.texture, animatedPosition, animatedRotation, 10, WHITE);
-            DrawText("Player 2", 700, 250, 70, RED);
-            DrawText(" has won the game! Congratulations!", 220, 350, 70, YELLOW);
+            DrawText("Player 2", 740, 250, 70, RED);
+            DrawText(" has won the game! Congratulations!", 260, 350, 70, YELLOW);
+        }
+
+        if(UpdateAndDrawButton(&backToTitleButton)) {
+            ResetRound(players);
+            for (int i = 0; i < 2; i++)
+            {
+                players[1].score = 0;
+            }
+            
+            currentPhase = TITLE_SCREEN;
         }
     }
 }

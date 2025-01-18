@@ -24,9 +24,10 @@
 // Global Variables
 extern bool isRoundOver;
 extern float timer;
+extern bool isGamePaused;
 
 // Enums
-typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_DIRECTIONS, MOVEMENT, PROJECTILE_MOVEMENT, ROUND_HANDLING, RESULTS} GamePhase;
+typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_DIRECTIONS, MOVEMENT, PROJECTILE_MOVEMENT, ROUND_HANDLING} GamePhase;
 
 //Structs
 typedef struct Hitbox {
