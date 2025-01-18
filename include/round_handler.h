@@ -3,6 +3,6 @@
 
 #include "game.h"
 
-void CheckRoundWinCondition(Player *players);
+void CheckRoundWinCondition(Player *players, Bomb *bombs);
 
 #endif // ROUND_HANDLER_H

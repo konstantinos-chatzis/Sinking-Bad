@@ -344,6 +344,7 @@ void HandleGamePhases() {
                 UpdateMovement(players, GetFrameTime());
 
                 if (IsMovementPhaseHalfComplete()) currentPhase++;
+                CheckRoundWinCondition(players, bombs);
             }
             break;
         case PROJECTILE_MOVEMENT:
@@ -373,7 +374,7 @@ void HandleGamePhases() {
                 currentPhase = MOVEMENT_DIRECTIONS;
                 break;
             } 
-            CheckRoundWinCondition(players);
+            CheckRoundWinCondition(players, bombs);
             UpdateMovement(players, GetFrameTime());
             UpdateProjectileMovement(players);
             FiringCommandsDrawing(players, &currentPlayerIndex);
