@@ -15,7 +15,7 @@ void DrawTitleScreen(GamePhase *currentPhase, Button *playButton, Button *loadBu
         *currentPhase = SHIP_DEPLOYMENT;
     }
     if (UpdateAndDrawButton(loadButton)) {
-        printf("Load\n");
+        LoadRestoreGame();
     }
     if (UpdateAndDrawButton(quitButton)) {
         CloseWindow(); // Trigger action for Quit

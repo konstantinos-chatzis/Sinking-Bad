@@ -16,8 +16,7 @@ void DrawPauseMenu(Button *saveButton, Button *pauseMenuBackToTitleButton) {
 
     if(UpdateAndDrawButton(saveButton)) {
         // Save
-        printf("Save\n");
-        isGamePaused = false;
+        SaveGame();
     }
     if (UpdateAndDrawButton(pauseMenuBackToTitleButton)) {
         // Back to Title

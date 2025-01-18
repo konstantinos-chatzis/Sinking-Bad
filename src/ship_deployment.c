@@ -22,9 +22,13 @@ void ShipDeploymentDrawing(Player *players, int* currentPlayerIndex){ // This fu
     if (*currentPlayerIndex == 0 && !players[0].hasDeployed) {
         DrawText("Player 1", 50, 40, 50, BLUE);
         DrawText(", deploy your ship!", 255, 40, 50, RAYWHITE); // 205 units more that the previous.
+
+        DrawRectangleRec(players[0].deploymentZone.rect, (Color){0, 121, 241, 128});
     } 
     else if (*currentPlayerIndex == 1 && !players[1].hasDeployed) {
         DrawText("Player 2", 50, 40, 50, RED);
         DrawText(", deploy your ship!", 270, 40, 50, RAYWHITE); // 220 units more that the previous.
+
+        DrawRectangleRec(players[1].deploymentZone.rect, (Color){130, 41, 55, 128});
     }
 }

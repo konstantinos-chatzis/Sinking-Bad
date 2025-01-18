@@ -2,7 +2,8 @@
 
 int main() {
 // Start.
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sea Duel");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sinking Bad");
+    SetWindowIcon(LoadImage("assets/sprites/icon.png"));
     SetTargetFPS(60);
     SetExitKey(0);
 

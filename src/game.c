@@ -9,6 +9,7 @@
 #include "hud.h"
 #include "title_screen.h"
 #include "pause_menu.h"
+#include "file_handler.h"
 
 Player players[2];
 Bomb bombs[4];
@@ -312,6 +313,40 @@ void ActionBackToTitle() {
     currentPhase = TITLE_SCREEN;
 }
 
+void SaveGame() {
+    SaveGameFile(&currentPhase, &currentPlayerIndex, players, &timer, &originalShipRotation1, &originalShipRotation2);
+}
+
+void LoadRestoreGame() {
+    // Check if the save file exists
+    FILE *file = fopen("saves/gamesave.dat", "rb");
+    if (!file) {
+        printf("Save file not found. Cannot restore game state.\n");
+        return;  // Exit the function if the file does not exist
+    }
+    fclose(file);
+
+    GamePhase _currentPhase;
+    int _currentPlayerIndex;
+    float _originalShipRotation1;
+    float _originalShipRotation2;
+    Player _players[2];
+    float _timer;
+
+    LoadGameFile(&_currentPhase, &_currentPlayerIndex, _players, &_timer, &_originalShipRotation1, &_originalShipRotation2);
+
+    // Restore game state
+    currentPhase = _currentPhase;
+    currentPlayerIndex = _currentPlayerIndex;
+    originalShipRotation1 = _originalShipRotation1;
+    originalShipRotation2 = _originalShipRotation2;
+    for (int i = 0; i < 2; i++)
+    {
+        players[i] = _players[i];
+    }
+    timer = _timer;
+}
+
 void HandleGamePhases() {
     if (isGamePaused && (currentPhase !=TITLE_SCREEN || currentPhase != ROUND_HANDLING)) {
         DrawPauseMenu(&saveButton, &pauseMenuBackToTitleButton);
@@ -435,7 +470,7 @@ void Update() {
         // PauseMenu
         if (IsKeyPressed(KEY_ESCAPE)) isGamePaused = !isGamePaused; // Toggle pause state
 
-        DrawHitboxes(); // Debugging
+        // DrawHitboxes(); // Debugging
     } else if(CheckGameIsOver(players)) {
         if(players[0].score == 3){
             UpdateAnimatedPlayer(GetFrameTime());
