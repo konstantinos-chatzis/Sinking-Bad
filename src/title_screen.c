@@ -1,5 +1,6 @@
 #include "title_screen.h"
 
+// Draw Title Screen Text and buttons
 void DrawTitleScreen(GamePhase *currentPhase, Button *playButton, Button *loadButton, Button *quitButton) {
 
     // Title

@@ -5,6 +5,5 @@
 
 void UpdateMovement(Player *players, float deltaTime);
 bool IsMovementPhaseHalfComplete();
-bool IsMovementPhaseComplete();
 
 #endif // MOVEMENT_H

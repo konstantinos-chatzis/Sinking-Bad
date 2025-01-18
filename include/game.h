@@ -25,6 +25,9 @@
 extern bool isRoundOver;
 extern float timer;
 extern bool isGamePaused;
+extern Sound clickSound;
+extern Sound shootSound;
+extern Sound explosionSound;
 
 // Enums
 typedef enum GamePhase {TITLE_SCREEN, SHIP_DEPLOYMENT, MOVEMENT_DIRECTIONS, MOVEMENT, PROJECTILE_MOVEMENT, ROUND_HANDLING} GamePhase;

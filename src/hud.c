@@ -4,6 +4,7 @@ Texture2D buttonNormal;
 Texture2D buttonClick;
 Texture2D buttonHover;
 
+// Load all HUD textures
 void LoadHUDTextures() {
     // Button textures
     buttonNormal = LoadTexture("assets/sprites/button_normal.png");
@@ -11,12 +12,14 @@ void LoadHUDTextures() {
     buttonClick = LoadTexture("assets/sprites/button_clicked.png");
 }
 
+// Unload all HUD textures
 void UnloadHUDTextures() {
     UnloadTexture(buttonNormal);
     UnloadTexture(buttonHover);
     UnloadTexture(buttonClick);
 }
 
+// Draw background
 void DrawBackground(Texture *backgroundTexture) {
     float scale = 11.0f;
 
@@ -29,6 +32,7 @@ void DrawBackground(Texture *backgroundTexture) {
     );
 }
 
+// Draw Score
 void DrawScore(Player *players) {
     DrawText("Score:", 1200, 40, 50, RAYWHITE);
     DrawText(TextFormat("%d", players[0].score), 1380, 40, 50, BLUE);
@@ -36,8 +40,8 @@ void DrawScore(Player *players) {
     DrawText(TextFormat("%d", players[1].score), 1440, 40, 50, RED);
 }
 
-Button CreateButton(float x, float y, float width, float height, 
-                    Texture *normal, Texture *hover, Texture *click, const char* text) {
+// Initialize a button at a set position and at set dimentions with set text. Returns that button
+Button CreateButton(float x, float y, float width, float height, Texture *normal, Texture *hover, Texture *click, const char* text) {
     return (Button) {
         .bounds = (Rectangle){x, y, width, height},
         .normalTexture = normal,
@@ -48,6 +52,7 @@ Button CreateButton(float x, float y, float width, float height,
     };
 }
 
+// Updates and Draws the button based on its state (normal, hover, or clicked). Returns true if the button was clicked
 bool UpdateAndDrawButton(Button *button) {
     Vector2 mousePosition = GetMousePosition();
     bool isMouseOver = CheckCollisionPointRec(mousePosition, button->bounds);
@@ -65,6 +70,7 @@ bool UpdateAndDrawButton(Button *button) {
             button->isClicked = true;
         } else if (button->isClicked && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             button->isClicked = false; // Reset click state
+            PlaySound(clickSound);
             return true; // Action is triggered
         } else {
             DrawTexturePro(

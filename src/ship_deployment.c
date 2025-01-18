@@ -1,8 +1,8 @@
 #include "ship_deployment.h"
 
 bool wasMouseButtonPressed = false;
-// 
-void ShipDeploymentInput(Player *players, int* currentPlayerIndex){ // This function goes in UpdateGameInput() in game.c
+// Get mouse input for ship deployment
+void ShipDeploymentInput(Player *players, int* currentPlayerIndex) { // This function goes in UpdateGameInput() in game.c
     Player* currentPlayer = &players[*currentPlayerIndex];
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
         currentPlayer->ship.position = GetMousePosition();
@@ -17,8 +17,8 @@ void ShipDeploymentInput(Player *players, int* currentPlayerIndex){ // This func
     }
 }
 
-// 
-void ShipDeploymentDrawing(Player *players, int* currentPlayerIndex){ // This function goes in UpdateGameDraw() in game.c
+//  Draw suggestive text for ship deployment
+void ShipDeploymentDrawing(Player *players, int* currentPlayerIndex) { // This function goes in UpdateGameDraw() in game.c
     if (*currentPlayerIndex == 0 && !players[0].hasDeployed) {
         DrawText("Player 1", 50, 40, 50, BLUE);
         DrawText(", deploy your ship!", 255, 40, 50, RAYWHITE); // 205 units more that the previous.

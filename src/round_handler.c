@@ -1,5 +1,6 @@
 #include "round_handler.h"
 
+// Checks collisions between players and enemy projectiles and players and bombs
 void CheckCollisions(Player *players, Bomb *bombs) {
     for(int i = 0; i < 2; i++) {
         // Colision detection
@@ -18,15 +19,18 @@ void CheckCollisions(Player *players, Bomb *bombs) {
     }
 }
 
+// Checks is a player is hit by a projectile or a bomb and updates the score
 void CheckRoundWinCondition(Player *players, Bomb *bombs) {
     CheckCollisions(players, bombs);
     
     if(!isRoundOver) {
         if(players[0].isHit) {
+            PlaySound(explosionSound);
             players[1].score++;
             isRoundOver = true;
         }
         else if(players[1].isHit) {
+            PlaySound(explosionSound);
             players[0].score++;
             isRoundOver = true;
         }

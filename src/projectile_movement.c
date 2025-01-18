@@ -1,6 +1,7 @@
 #include "projectile_movement.h"
 
-void FiringCommandsInput(Player *players, int* currentPlayerIndex){
+// Get mouse input for projectile direction and confirmation
+void FiringCommandsInput(Player *players, int* currentPlayerIndex) {
     Player* currentPlayer = &players[*currentPlayerIndex];
     if(!currentPlayer->hasFired){
         Vector2 mousePosition = GetMousePosition();
@@ -19,7 +20,8 @@ void FiringCommandsInput(Player *players, int* currentPlayerIndex){
     }
 }
 
-void UpdateProjectileMovement(Player *players){
+// Update projectile position based on its direction and speed
+void UpdateProjectileMovement(Player *players) {
     for (int i = 0; i < 2; i++){
         if (players[i].hasFired){
             // Calculate projectile movement based on rotation and speed
@@ -37,17 +39,18 @@ void UpdateProjectileMovement(Player *players){
     }
 }
 
-void FiringCommandsDrawing(Player *players, int* currentPlayerIndex){
+// Draw firing commands suggestive text and and aiming line
+void FiringCommandsDrawing(Player *players, int* currentPlayerIndex) {
     Player *currentPlayer = &players[*currentPlayerIndex];
 
     if (!currentPlayer->hasFired){
         if (*currentPlayerIndex == 0) {
             DrawText("Player 1", 50, 50, 50, BLUE);
-            DrawText(", fire your projectile!", 255, 50, 50, GRAY); // 205 units more that the previous.
+            DrawText(", fire your projectile!", 255, 50, 50, RAYWHITE); // 205 units more that the previous.
         } 
         else if (*currentPlayerIndex == 1) {
             DrawText("Player 2", 50, 50, 50, RED);
-            DrawText(", fire your projectile!", 270, 50, 50, GRAY); // 220 units more that the previous.
+            DrawText(", fire your projectile!", 270, 50, 50, RAYWHITE); // 220 units more that the previous.
         }
 
         // Draw aiming line

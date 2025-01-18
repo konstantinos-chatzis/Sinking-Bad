@@ -7,7 +7,7 @@ Texture2D sliderKnob;
 
 float selectedSpeed = 1.0f;
 
-// Function to load textures
+// Function to load speed selection textures
 void LoadSpeedSelectionTextures() {
     // Slider textures
     sliderBackground = LoadTexture("assets/sprites/slider_bar_background.png");
@@ -15,7 +15,7 @@ void LoadSpeedSelectionTextures() {
     sliderKnob = LoadTexture("assets/sprites/slider_bar_knob.png");
 }
 
-// Function to unload textures
+// Function to unload speed selection textures
 void UnloadSpeedSelectionTextures() {
     // Slider textures
     UnloadTexture(sliderBackground);
@@ -23,7 +23,8 @@ void UnloadSpeedSelectionTextures() {
     UnloadTexture(sliderKnob);
 }
 
-void ShipDirectionInput(Player *players, int* currentPlayerIndex){
+// Get mouse inpute for the ship's direction
+void ShipDirectionInput(Player *players, int* currentPlayerIndex) {
     Player* currentPlayer = &players[*currentPlayerIndex];
     if (!currentPlayer->hasSelectedDirection){
         Vector2 mousePosition = GetMousePosition();
@@ -36,7 +37,8 @@ void ShipDirectionInput(Player *players, int* currentPlayerIndex){
     }
 }
 
-void ShipDirectionDrawing(Player *players, int* currentPlayerIndex){ // This function goes in UpdateGameDraw() in game.c | (*players)[2] is a pointer to the entire array
+// Draw ship direction suggestive text
+void ShipDirectionDrawing(Player *players, int* currentPlayerIndex) { // This function goes in UpdateGameDraw() in game.c | (*players)[2] is a pointer to the entire array
     if (*currentPlayerIndex == 0 && !players[0].hasSelectedDirection) {
         DrawText("Player 1", 50, 40, 50, BLUE);
         DrawText(", select your ship's direction!", 255, 40, 50, RAYWHITE); // 205 units more that the previous.
@@ -47,6 +49,7 @@ void ShipDirectionDrawing(Player *players, int* currentPlayerIndex){ // This fun
     }
 }
 
+// Draw ship speed selection slider
 void DrawShipSpeedSlider(Player* currentPlayer, float minSpeed, float maxSpeed, Rectangle sliderBounds) {
     // Calculate the slider fill height based on the current speed
     float sliderFillHeight = ((selectedSpeed - minSpeed) / (maxSpeed - minSpeed)) * sliderBounds.height;
@@ -117,6 +120,7 @@ void DrawShipSpeedSlider(Player* currentPlayer, float minSpeed, float maxSpeed, 
     );
 }
 
+// Handle slider-mouse position dynamics
 void HandleShipSpeedInput(Player* player, float minSpeed, float maxSpeed, Rectangle sliderBounds) {
     if (!player->hasSelectedSpeed) {
         Vector2 mousePosition = GetMousePosition();
@@ -131,6 +135,7 @@ void HandleShipSpeedInput(Player* player, float minSpeed, float maxSpeed, Rectan
     }
 }
 
+// Calls the above input functions, draw speed selection suggestive text and draw selection button
 void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSpeed, float maxSpeed, Button *selectButton) {
     Player* currentPlayer = &players[*currentPlayerIndex];
 

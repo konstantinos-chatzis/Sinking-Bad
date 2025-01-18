@@ -3,6 +3,7 @@
 float timer = 10.0f; // Time in seconds for the phase
 float elapsedTime = 0.0f; // Time elapsed since the start of the phase
 
+// Computes the ships required negative accelleration based on its initial speed. Returns that acceleration
 float ComputeAcceleration(float initialSpeed, float D_min, float D_max, float k, float p) {
     float normalizedDistance = D_min + (D_max - D_min) * powf(initialSpeed, p) / (powf(initialSpeed, p) + k);
 
@@ -11,6 +12,7 @@ float ComputeAcceleration(float initialSpeed, float D_min, float D_max, float k,
     return -requiredDeceleration; // Always negative
 }
 
+// Update the timer, and the ship's positions based on their speed and acceleration
 void UpdateMovement(Player *players, float deltaTime) {
     elapsedTime += deltaTime;
     if (elapsedTime >= 1.0f) {
@@ -57,14 +59,8 @@ void UpdateMovement(Player *players, float deltaTime) {
     }
 }
 
+// Check if the timer is half done. If so, returns true
 bool IsMovementPhaseHalfComplete() {
-    
     if (timer <= 5) return true;
     else return false;
 }
-
-bool IsMovementPhaseComplete() {
-    if (timer <= 0) return true;
-    else return false;
-}
-

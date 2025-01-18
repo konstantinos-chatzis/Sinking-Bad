@@ -31,11 +31,17 @@ Button gameOverBackToTitleButton;
 Button saveButton;
 Button pauseMenuBackToTitleButton;
 
+// Sound
+Sound clickSound;
+Sound shootSound;
+Sound explosionSound;
+
 // Variables for animation (at victory screen)
 Vector2 animatedPosition = { 700, 400 };
 Vector2 animatedVelocity = { 200, 150 };
 float animatedRotation = 0.0f;
 
+// Initialize players with their default attributes
 void InitPlayers() {
     // Player 1
     players[0].id = 0;
@@ -94,6 +100,7 @@ void InitPlayers() {
     players[1].movementAvailableZone.rect = (Rectangle){MARGIN_LEFT+80, MARGIN_TOP+80, 1550-80*2, 800-80*2};
 }
 
+// Initialize bombs at set positions
 void InitBombs() {
     bombs[0].position = (Vector2){750, 200};
     bombs[1].position = (Vector2){1050, 400};
@@ -101,6 +108,7 @@ void InitBombs() {
     bombs[3].position = (Vector2){1050, 800};
 }
 
+// Initialize all hitboxes based on the objects position and size
 void InitHitboxes() {
     for (int i = 0; i < 2; i++) {
         // Ship Hitboxes
@@ -125,6 +133,7 @@ void InitHitboxes() {
     }
 }
 
+// Initialize all buttons, setting their position, size and text
 void InitButtons() {
     // Title Screen
     playButton = CreateButton(816, 300, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Play");
@@ -142,6 +151,7 @@ void InitButtons() {
     pauseMenuBackToTitleButton = CreateButton(751, 500, 256, 64, &buttonNormal, &buttonHover, &buttonClick, "Back to Title");
 }
 
+// Load the texture of a ship dynamically, based on its color. Returns the loaded texture
 Texture2D LoadShipTexture(Color color) {
     char* colorName;
 
@@ -162,6 +172,7 @@ Texture2D LoadShipTexture(Color color) {
     return LoadTexture(filePath);
 }
 
+// Load all game textures. This function is called in Start()
 void LoadGameTextures() {
     for(int i = 0; i < 2;i++){
         players[i].ship.texture = LoadShipTexture(players[i].color);
@@ -176,6 +187,7 @@ void LoadGameTextures() {
     backgroundTexture = LoadTexture("assets/sprites/background.png");
 }
 
+// Unload all game textures. This function is called after the main game loop, before the window closes
 void UnloadGameTextures() {
     for(int i = 0; i < 2;i++){
         UnloadTexture(players[i].ship.texture);
@@ -190,6 +202,14 @@ void UnloadGameTextures() {
     UnloadTexture(backgroundTexture);
 }
 
+// Load all game sounds. This function is called in Start()
+void LoadGameSounds() {
+    clickSound = LoadSound("assets/sounds/click.wav");
+    shootSound = LoadSound("assets/sounds/shoot.wav");
+    explosionSound = LoadSound("assets/sounds/explosion.wav");
+}
+
+// Update all objects' hitboxes based on the position
 void UpdateHitboxes() {
     for (int i = 0; i < 2; i++) {
         // Ship Hitboxes
@@ -207,12 +227,12 @@ void UpdateHitboxes() {
     }
 }
 
-// Debugging function to draw the hitbox
+// Debugging function to draw a hitbox
 void DrawHitbox(const Hitbox* hitbox, Color color) {
     DrawRectangleLinesEx(hitbox->rect, 1.5f, color);
 }
 
-// Debugging function to draw the hitboxes
+// Debugging function to draw all relevant hitboxes
 void DrawHitboxes() {
     for(int i = 0; i < 2; i++){
         DrawHitbox(&players[i].ship.hitbox, GREEN);
@@ -227,9 +247,9 @@ void DrawHitboxes() {
     DrawHitbox(&players[1].deploymentZone, RED);
     DrawHitbox(&players[0].movementAvailableZone, ORANGE);
     DrawHitbox(&players[0].projectile.movementAvailableZone, BLACK);
-
 }
 
+// Draw all ships
 void DrawShips() {
     for (int i = 0; i < 2; i++){
         if (players[i].hasDeployed){
@@ -245,6 +265,7 @@ void DrawShips() {
     }
 }
 
+// Draw all projectiles
 void DrawProjectiles() {
     for (int i = 0; i < 2; i++){
         if (players[i].projectile.isActive){
@@ -260,6 +281,7 @@ void DrawProjectiles() {
     }
 }
 
+// Draw all bombs
 void DrawBombs() {
     for (int i = 0; i < 4; i++){
         DrawTexturePro(
@@ -273,10 +295,12 @@ void DrawBombs() {
     }
 }
 
-bool CheckCollisionHitboxes(const Hitbox *hitbox1, const Hitbox *hitbox2){
+// Custom collision detection utilizing the hitbox system. Returns true if a collision is detected
+bool CheckCollisionHitboxes(const Hitbox *hitbox1, const Hitbox *hitbox2) {
     return CheckCollisionRecs(hitbox1->rect, hitbox2->rect);
 }
 
+// Reset the state of the game. This function is called after a round ends and parts of it are called when and as needed.
 void ResetRound(Player *players) {
     // Reset Players
     for (int i = 0; i < 2; i++)
@@ -297,12 +321,14 @@ void ResetRound(Player *players) {
     timer = 10.0f;
 }
 
+// Check if the game is over. Returns true if either of the players have reached a score of 3
 bool CheckGameIsOver(Player *players) {
     if (players[0].score == 3 || players[1].score == 3) {
         return true;
     } else return false;
 }
 
+// Resets all players' score and returns to title screen. This is called in pause_menu.c/DrawPauseMenu()
 void ActionBackToTitle() {
     ResetRound(players);
     for (int i = 0; i < 2; i++)
@@ -313,10 +339,12 @@ void ActionBackToTitle() {
     currentPhase = TITLE_SCREEN;
 }
 
+// Simply calls the function file_handler.c/SaveGameFile()
 void SaveGame() {
     SaveGameFile(&currentPhase, &currentPlayerIndex, players, &timer, &originalShipRotation1, &originalShipRotation2);
 }
 
+// Reads the gamesave.dat file (if it exists) and restores the game state
 void LoadRestoreGame() {
     // Check if the save file exists
     FILE *file = fopen("saves/gamesave.dat", "rb");
@@ -347,6 +375,7 @@ void LoadRestoreGame() {
     timer = _timer;
 }
 
+// Main function to handle game phases. Pause logic is also implemented here
 void HandleGamePhases() {
     if (isGamePaused && (currentPhase !=TITLE_SCREEN || currentPhase != ROUND_HANDLING)) {
         DrawPauseMenu(&saveButton, &pauseMenuBackToTitleButton);
@@ -391,6 +420,7 @@ void HandleGamePhases() {
             if (players[0].hasFired && players[1].hasFired){
                 players[0].projectile.isActive = true;
                 players[1].projectile.isActive = true;
+                PlaySound(shootSound);
                 currentPhase++;
             } 
             break;
@@ -417,6 +447,7 @@ void HandleGamePhases() {
     }
 }
 
+// Update the position of the animated ship at victory screen
 void UpdateAnimatedPlayer(float deltaTime) {
     // Update position
     animatedPosition.x += animatedVelocity.x * deltaTime;
@@ -439,6 +470,7 @@ void Start() {
     InitPlayers();
     InitBombs();
     LoadGameTextures();
+    LoadGameSounds();
     InitHitboxes(); // Needs to be called after loading textures
     InitButtons();
 }
