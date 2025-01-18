@@ -5,11 +5,6 @@ Texture2D sliderBackground;
 Texture2D sliderFill;
 Texture2D sliderKnob;
 
-// Global variables for button textures
-Texture2D buttonNormal;
-Texture2D buttonHover;
-Texture2D buttonClick;
-
 float selectedSpeed = 1.0f;
 
 // Function to load textures
@@ -18,11 +13,6 @@ void LoadSpeedSelectionTextures() {
     sliderBackground = LoadTexture("assets/sprites/slider_bar_background.png");
     sliderFill = LoadTexture("assets/sprites/slider_bar_fill.png");
     sliderKnob = LoadTexture("assets/sprites/slider_bar_knob.png");
-
-    // Button textures
-    buttonNormal = LoadTexture("assets/sprites/button_normal.png");
-    buttonHover = LoadTexture("assets/sprites/button_hover.png");
-    buttonClick = LoadTexture("assets/sprites/button_clicked.png");
 }
 
 // Function to unload textures
@@ -31,11 +21,6 @@ void UnloadSpeedSelectionTextures() {
     UnloadTexture(sliderBackground);
     UnloadTexture(sliderFill);
     UnloadTexture(sliderKnob);
-
-    // Button textures
-    UnloadTexture(buttonNormal);
-    UnloadTexture(buttonHover);
-    UnloadTexture(buttonClick);
 }
 
 void ShipDirectionInput(Player *players, int* currentPlayerIndex){
@@ -146,7 +131,7 @@ void HandleShipSpeedInput(Player* player, float minSpeed, float maxSpeed, Rectan
     }
 }
 
-void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSpeed, float maxSpeed) {
+void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSpeed, float maxSpeed, Button *selectButton) {
     Player* currentPlayer = &players[*currentPlayerIndex];
 
     // Display instructions for the current player
@@ -163,11 +148,13 @@ void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSp
     HandleShipSpeedInput(currentPlayer, minSpeed, maxSpeed, sliderBounds);
     DrawShipSpeedSlider(currentPlayer, minSpeed, maxSpeed, sliderBounds);
 
-    if(DrawButton(sliderBounds.x - 40, sliderBounds.y + sliderBounds.height + 20, 4, 4, &buttonNormal, &buttonHover, &buttonClick, "Select")) {
-        // Button action is triggered only when the mouse is released over the button
+    if (UpdateAndDrawButton(selectButton)) {
         currentPlayer->ship.speed = selectedSpeed;
         currentPlayer->hasSelectedSpeed = true;
-        *currentPlayerIndex = (*currentPlayerIndex + 1) % 2;
+        *currentPlayerIndex = (*currentPlayerIndex + 1) % 2; // Move to the next player
         selectedSpeed = 1.0f; // Reset the selected speed
+
+        // Reset the button state for the new player
+        selectButton->isClicked = false;
     }
 }

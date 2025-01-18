@@ -3,23 +3,28 @@
 
 #include "game.h"
 
-// typedef struct Button { // Behaves like an "Object"
-//     float posX;
-//     float posY;
-//     float widthFactor;
-//     float heightFactor;
-//     Texture buttonNormal;
-//     Texture buttonHover;
-//     Texture buttonClick;
+// Global variables for button textures
+extern Texture2D buttonNormal;
+extern Texture2D buttonClick;
+extern Texture2D buttonHover;
 
-//     // Function pointer
-//     void 
-// } Button;
+// NEW
+typedef struct Button {
+    Rectangle bounds;         // Position and size of the button
+    Texture *normalTexture;   // Texture for the normal state
+    Texture *hoverTexture;    // Texture for the hover state
+    Texture *clickTexture;    // Texture for the click state
+    const char* text;         // Text to display on the button
+    bool isClicked;           // State tracking if the button was clicked
+} Button;
+
+void LoadHUDTextures();
+void UnloadHUDTextures();
 
 void DrawBackground(Texture *panelTexture);
-void DrawTimer();
 void DrawScore(Player *players);
 
-bool DrawButton(float posX, float posY, float widthFactor, float heightFactor, Texture *buttonNormal, Texture *buttonHover, Texture *buttonClick, const char* text);
+Button CreateButton(float x, float y, float width, float height, Texture *normal, Texture *hover, Texture *click, const char* text);
+bool UpdateAndDrawButton(Button *button);
 
 #endif // HUD_H

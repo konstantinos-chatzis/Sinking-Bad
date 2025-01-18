@@ -54,7 +54,6 @@ typedef struct Projectile {
     bool isOutOfBounds;
 } Projectile;
     
-
 typedef struct Bomb {
     Vector2 position;
     Hitbox hitbox;

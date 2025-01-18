@@ -4,6 +4,7 @@ int main() {
 // Start.
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Sea Duel");
     SetTargetFPS(60);
+    SetExitKey(0);
 
     Start();
 

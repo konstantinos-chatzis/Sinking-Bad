@@ -7,6 +7,7 @@
 #include "projectile_movement.h"
 #include "round_handler.h"
 #include "hud.h"
+#include "title_screen.h"
 
 Player players[2];
 Bomb bombs[4];
@@ -19,6 +20,10 @@ float originalShipRotation2;
 
 // HUD
 Texture backgroundTexture;
+Button playButton;
+Button loadButton;
+Button quitButton;
+Button selectButton;
 
 // Variables for animation (at victory screen)
 Vector2 animatedPosition = { 700, 400 };
@@ -114,6 +119,14 @@ void InitHitboxes() {
     }
 }
 
+void InitButtons() {
+    playButton = CreateButton(816, 300, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Play");
+    loadButton = CreateButton(816, 400, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Load");
+    quitButton = CreateButton(816, 500, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Quit");
+
+    selectButton = CreateButton(5, 720, 128, 64, &buttonNormal, &buttonHover, &buttonClick, "Select");
+}
+
 Texture2D LoadShipTexture(Color color) {
     char* colorName;
 
@@ -143,6 +156,7 @@ void LoadGameTextures() {
         bombs[i].texture = LoadTexture("assets/sprites/bomb.png");
     }
     LoadSpeedSelectionTextures();
+    LoadHUDTextures();
     backgroundTexture = LoadTexture("assets/sprites/background.png");
 }
 
@@ -155,6 +169,7 @@ void UnloadGameTextures() {
         UnloadTexture(bombs[i].texture);
     }
     UnloadSpeedSelectionTextures();
+    UnloadHUDTextures();
     UnloadTexture(backgroundTexture);
 }
 
@@ -278,7 +293,7 @@ bool CheckGameIsOver(Player *players) {
 void HandleGamePhases() {
     switch (currentPhase) {
         case TITLE_SCREEN:
-            //
+            DrawTitleScreen(&currentPhase, &playButton, &loadButton, &quitButton);
             break;
         case SHIP_DEPLOYMENT:
             ShipDeploymentInput(players, &currentPlayerIndex);
@@ -294,7 +309,7 @@ void HandleGamePhases() {
             originalShipRotation1 = players[0].ship.rotation;
             originalShipRotation2 = players[1].ship.rotation;
 
-            if (players[currentPlayerIndex].hasSelectedDirection) ShipSpeedInputDrawing(players, &currentPlayerIndex, 1.0f, 10.0f);
+            if (players[currentPlayerIndex].hasSelectedDirection) ShipSpeedInputDrawing(players, &currentPlayerIndex, 1.0f, 10.0f, &selectButton);
             if (players[0].hasSelectedSpeed && players[1].hasSelectedSpeed) currentPhase++; 
             break;
         case MOVEMENT:
@@ -322,9 +337,6 @@ void HandleGamePhases() {
             UpdateMovement(players, GetFrameTime());
             UpdateProjectileMovement(players);
             FiringCommandsDrawing(players, &currentPlayerIndex);
-            if (IsMovementPhaseComplete()) {
-                // currentPhase = ?;
-            }
             break;
     }
 }
@@ -352,12 +364,16 @@ void Start() {
     InitBombs();
     LoadGameTextures();
     InitHitboxes(); // Needs to be called after loading textures
+    InitButtons();
 }
 
 // Update is called once per frame
 void Update() {
-    if (!CheckGameIsOver(players) && currentPhase != TITLE_SCREEN) {
-        ClearBackground(RAYWHITE);
+    ClearBackground(LIGHTGRAY);
+    if (currentPhase == TITLE_SCREEN) {
+        HandleGamePhases();
+    }
+    else if (!CheckGameIsOver(players)) {
         DrawBackground(&backgroundTexture);
         DrawScore(players);
 
@@ -375,8 +391,7 @@ void Update() {
         DrawProjectiles();
 
         DrawHitboxes(); // Debugging
-    } else if(CheckGameIsOver(players) && currentPhase != TITLE_SCREEN) {
-        ClearBackground(LIGHTGRAY);
+    } else if(CheckGameIsOver(players)) {
         if(players[0].score == 3){
             UpdateAnimatedPlayer(GetFrameTime());
             DrawTextureEx(players[0].ship.texture, animatedPosition, animatedRotation, 10, WHITE);
@@ -388,8 +403,5 @@ void Update() {
             DrawText("Player 2", 700, 250, 70, RED);
             DrawText(" has won the game! Congratulations!", 220, 350, 70, YELLOW);
         }
-    } else if(currentPhase == TITLE_SCREEN) {
-        ClearBackground(LIGHTGRAY);
-        
     }
 }

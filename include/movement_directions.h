@@ -9,14 +9,13 @@
 #define SLIDER_HEIGHT 400
 #define SLIDER_X 100
 #define SLIDER_Y 200
-#define BUTTON_SCALE 5
 
 // Direction Selection Functions
 void ShipDirectionInput(Player *players, int* currentPlayerIndex);
 void ShipDirectionDrawing(Player *players, int* currentPlayerIndex);
 
 // Speed Selection Functions
-void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSpeed, float maxSpeed);
+void ShipSpeedInputDrawing(Player *players, int* currentPlayerIndex, float minSpeed, float maxSpeed, Button *selectButton);
 
 // Texture Loading Functions
 void LoadSpeedSelectionTextures();
