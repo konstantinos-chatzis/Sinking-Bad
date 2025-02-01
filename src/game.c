@@ -319,6 +319,9 @@ void ResetRound(Player *players) {
 
     // Reset Timer
     timer = 10.0f;
+
+    // Reset currentPlayerIndex
+    currentPlayerIndex = 0;
 }
 
 // Check if the game is over. Returns true if either of the players have reached a score of 3
